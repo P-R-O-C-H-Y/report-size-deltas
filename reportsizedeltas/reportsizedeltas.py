@@ -337,7 +337,7 @@ class ReportSizeDeltas:
                     row[0] = sketch[self.ReportKeys.name]
                     summary_report_data.append(row)
                     # Add the absolute memory data to the cell
-                    if self.ReportKeys.compilation_success != true:
+                    if self.ReportKeys.compilation_success is True:
                         value = X
                     elif self.ReportKeys.warnings > 0:
                         value = self.ReportKeys.warnings
