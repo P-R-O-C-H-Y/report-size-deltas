@@ -339,7 +339,7 @@ class ReportSizeDeltas:
                     # Add the absolute memory data to the cell
                     if self.ReportKeys.compilation_success is True:
                         value = X
-                    elif self.ReportKeys.warnings > 0:
+                    elif self.ReportKeys.warnings is not None:
                         value = self.ReportKeys.warnings
                     else:
                         value = 0
