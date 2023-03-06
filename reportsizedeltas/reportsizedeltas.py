@@ -68,6 +68,7 @@ class ReportSizeDeltas:
         commit_hash = "commit_hash"
         commit_url = "commit_url"
         sizes = "sizes"
+        warnings = "warnings"
         name = "name"
         absolute = "absolute"
         relative = "relative"
@@ -321,9 +322,32 @@ class ReportSizeDeltas:
         # > This equals a limit of 65,536 4-byte unicode characters.
         maximum_report_length = 262144
 
-        fqbn_column_heading = "Board"
+        fqbn_column_heading = "Library"
 
+        summary_report_data = [[fqbn_column_heading]]
+        row_number = 0
+        column_number = 0
+        for fqbns_data in sketches_reports:
+            for sketch in fqbns_data[self.ReportKeys.sketches]:
+                row_number += 1
+                # Add a row to the report
+                row[0] = sketch[self.ReportKeys.name]
+                summary_report_data.append(row)
+
+                # Populate the row with data
+                for boards in sketch[self.ReportKeys.board]:
+                    # Add the absolute memory data to the cell
+                    if self.ReportKeys.compilation_success != true:
+                        value = X
+                    elif self.ReportKeys.warnings > 0:
+                        value = self.ReportKeys.warnings
+                    else:
+                        value = 0
+
+                    summary_report_data[row_number][column_number+1] = value
+                
         # Generate summary report data
+         """
         summary_report_data = [[fqbn_column_heading]]
         row_number = 0
         for fqbns_data in sketches_reports:
@@ -359,7 +383,7 @@ class ReportSizeDeltas:
                             maximum=size_data[self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.maximum]
                         )
                     )
-
+        """
         # Generate detailed report data
         full_report_data = [[fqbn_column_heading]]
         row_number = 0
