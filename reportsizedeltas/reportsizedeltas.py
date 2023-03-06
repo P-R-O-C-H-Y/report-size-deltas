@@ -344,7 +344,7 @@ class ReportSizeDeltas:
                     else:
                         value = 0
 
-                    summary_report_data[row_number+1][column_number] = value
+                    summary_report_data[row_number][column_number] = value
 
                 row_number += 1
                 
