@@ -328,14 +328,15 @@ class ReportSizeDeltas:
         row_number = 0
         column_number = 0
         for fqbns_data in sketches_reports:
-            for sketch in fqbns_data[self.ReportKeys.sketches]:
+            for fqbn_data in fqbns_data[self.ReportKeys.boards]:
                 row_number += 1
+            
                 # Add a row to the report
-                row[0] = sketch[self.ReportKeys.name]
+                row[0] = fqbn_data[self.ReportKeys.name]
                 summary_report_data.append(row)
 
                 # Populate the row with data
-                for boards in sketch[self.ReportKeys.board]:
+                for sketch in fqbn_data[self.ReportKeys.sketches]:
                     # Add the absolute memory data to the cell
                     if self.ReportKeys.compilation_success != true:
                         value = X
@@ -344,7 +345,9 @@ class ReportSizeDeltas:
                     else:
                         value = 0
 
-                    summary_report_data[row_number][column_number+1] = value
+                    summary_report_data[row_number+1][column_number] = value
+                
+                column_number += 1
                 
         # Generate summary report data
         """summary_report_data = [[fqbn_column_heading]]
