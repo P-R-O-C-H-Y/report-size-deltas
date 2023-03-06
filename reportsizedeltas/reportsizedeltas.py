@@ -347,8 +347,7 @@ class ReportSizeDeltas:
                     summary_report_data[row_number][column_number+1] = value
                 
         # Generate summary report data
-         """
-        summary_report_data = [[fqbn_column_heading]]
+        """summary_report_data = [[fqbn_column_heading]]
         row_number = 0
         for fqbns_data in sketches_reports:
             for fqbn_data in fqbns_data[self.ReportKeys.boards]:
