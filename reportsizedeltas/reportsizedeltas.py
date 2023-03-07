@@ -329,7 +329,7 @@ class ReportSizeDeltas:
         column_number = 1
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
-                summary_report_data[0].append(self.ReportKeys.board)
+                summary_report_data[0].append(boards[self.ReportKeys.board])
 
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
@@ -339,10 +339,10 @@ class ReportSizeDeltas:
                     row[0] = sketch[self.ReportKeys.name]
                     summary_report_data.append(row)
                     # Add the absolute memory data to the cell
-                    if self.ReportKeys.compilation_success is not True:
+                    if sketch[self.ReportKeys.compilation_success] is not True:
                         value = "X"
-                    elif self.ReportKeys.warnings is not None:
-                        value = self.ReportKeys.warnings
+                    elif sketch[self.ReportKeys.warnings] is not None:
+                        value = sketch[self.ReportKeys.warnings]
                     else:
                         value = 0
 
