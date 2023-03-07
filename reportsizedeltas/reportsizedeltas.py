@@ -357,7 +357,10 @@ class ReportSizeDeltas:
                         value = sketch[self.ReportKeys.warnings][self.ReportKeys.delta][self.ReportKeys.absolute]
                     else:
                         value = "Ok"
-                    print("row_number = " + row_number + " - column_number = " + column_number)
+                        
+                    print(row_number,end = " ")
+                    print(column_number,end = " ")
+                    print()
 
                     summary_report_data[row_number][column_number] = value
         
