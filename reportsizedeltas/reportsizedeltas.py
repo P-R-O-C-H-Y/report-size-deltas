@@ -59,7 +59,7 @@ class ReportSizeDeltas:
     artifact_name -- name of the workflow artifact that contains the memory usage data
     token -- GitHub access token
     """
-    report_key_beginning = "**Memory usage change @ "
+    report_key_beginning = "Library example build test"
 
     class ReportKeys:
         """Key names used in the sketches report dictionary"""
@@ -329,7 +329,8 @@ class ReportSizeDeltas:
         column_number = 0
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
-                summary_report_data[0].append(boards[self.ReportKeys.board])
+                board_name = boards[self.ReportKeys.board].split(":")
+                summary_report_data[0].append(board_name.upper())
                 column_number += 1
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
@@ -713,44 +714,12 @@ def get_report_row_number(report, row_heading):
     """Return the row number of the given heading.
 
     Keyword arguments:
-    row_heading -- the text of the column heading. If it doesn't exist, a column will be created with this heading.
+    row_heading -- the text of the row heading. If it doesn't exist a 0 will be returned
     """
-    count = 0
     for i in report:
         if i[0] == row_heading:
             return report.index(i)
-    
     return 0
-
-    """
-    for i, e in enumerate(report):
-        try:
-            return i, e.index(row_heading)
-        except ValueError:
-            return [0,0]
-
-            # Add a row to the report
-            #row = [ "N/A" for i in boards]
-            #row.append("N/A")
-            #summary_report_data.append(row)
-
-            #return 
-    """
-    """
-    try:
-        row_number = report[0].index(row_heading, 1)
-    except ValueError:
-        # There is no existing column, so create columns for relative and absolute
-        row_number = len(report[0])
-
-        # Absolute column
-        # Add the heading
-        report[0].append(row_heading)
-        # Expand the size of the last (current) row to match the new number of columns
-        report[len(report) - 1].append("")
-
-    """
-    #return row_number
 
 def get_summary_value(show_emoji, minimum, maximum):
     """Return the Markdown formatted text for a memory change data cell in the report table.
