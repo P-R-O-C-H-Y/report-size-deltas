@@ -325,23 +325,32 @@ class ReportSizeDeltas:
         fqbn_column_heading = "Library"
 
         summary_report_data = [[fqbn_column_heading]]
-        row_number = 1
+        row_number = 0
         column_number = 0
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
                 summary_report_data[0].append(boards[self.ReportKeys.board])
                 column_number += 1
-                row_number = 1
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
-                    # Add a row to the report
-                    row = [ "N/A" for i in boards]
-                    row.append("N/A")
-                    #row = [ for _ in range(len(summary_report_data[0]))]
+
                     path = splitall(sketch[self.ReportKeys.name])
-                    row[0] = path[5]
-                    summary_report_data.append(row)
-                    # Add the absolute memory data to the cell
+                    library_name = path[5]
+                    # Determine row number for library
+                    position = get_report_row_number(
+                        report=summary_report_data,
+                        row_heading=library_name
+                    )
+                    if position is "None":
+                        # Add a row to the report
+                        row = [ "N/A" for i in boards]
+                        row.append("N/A")
+                        row[0] = library_name
+                        summary_report_data.append(row)
+                        row_number = len(summary_report_data)
+                    else:
+                        row_number = position[0]
+
                     if sketch[self.ReportKeys.compilation_success] is not True:
                         value = "X"
                     elif sketch[self.ReportKeys.warnings][self.ReportKeys.delta][self.ReportKeys.absolute] != 0:
@@ -350,8 +359,6 @@ class ReportSizeDeltas:
                         value = "Ok"
 
                     summary_report_data[row_number][column_number] = value
-
-                    row_number += 1
         
         for x in summary_report_data:
             for y in x:
@@ -701,13 +708,25 @@ def get_report_row_number(report, row_heading):
     Keyword arguments:
     row_heading -- the text of the column heading. If it doesn't exist, a column will be created with this heading.
     """
-    relative_row_heading = "%"
 
+    for i, e in enumerate(report):
+        try:
+            return i, e.index(row_heading)
+        except ValueError:
+            return None
+
+            # Add a row to the report
+            #row = [ "N/A" for i in boards]
+            #row.append("N/A")
+            #summary_report_data.append(row)
+
+            #return 
+    """
     try:
-        column_number = report[0].index(row_heading, 1)
+        row_number = report[0].index(row_heading, 1)
     except ValueError:
         # There is no existing column, so create columns for relative and absolute
-        column_number = len(report[0])
+        row_number = len(report[0])
 
         # Absolute column
         # Add the heading
@@ -715,13 +734,8 @@ def get_report_row_number(report, row_heading):
         # Expand the size of the last (current) row to match the new number of columns
         report[len(report) - 1].append("")
 
-        # Relative column
-        # Add the heading
-        report[0].append(relative_row_heading)
-        # Expand the size of the last (current) row to match the new number of columns
-        report[len(report) - 1].append("")
-
-    return column_number
+    """
+    #return row_number
 
 def get_summary_value(show_emoji, minimum, maximum):
     """Return the Markdown formatted text for a memory change data cell in the report table.
