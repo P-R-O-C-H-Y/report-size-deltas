@@ -334,7 +334,7 @@ class ReportSizeDeltas:
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
                     # Add a row to the report
-                    row = [ 0 for i in range(boards)]
+                    row = [ 0 for i in boards]
                     #row = [ for _ in range(len(summary_report_data[0]))]
                     row[0] = sketch[self.ReportKeys.name]
                     summary_report_data.append(row)
