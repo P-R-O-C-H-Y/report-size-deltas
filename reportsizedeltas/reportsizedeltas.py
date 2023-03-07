@@ -330,7 +330,7 @@ class ReportSizeDeltas:
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
                 board_name = boards[self.ReportKeys.board].split(":")
-                summary_report_data[0].append(board_name.upper())
+                summary_report_data[0].append(board_name[2].upper())
                 column_number += 1
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
