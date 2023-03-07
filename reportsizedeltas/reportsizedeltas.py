@@ -341,7 +341,7 @@ class ReportSizeDeltas:
                         report=summary_report_data,
                         row_heading=library_name
                     )
-                    if position is "None":
+                    if position == [0,0]:
                         # Add a row to the report
                         row = [ "N/A" for i in boards]
                         row.append("N/A")
@@ -713,7 +713,7 @@ def get_report_row_number(report, row_heading):
         try:
             return i, e.index(row_heading)
         except ValueError:
-            return None
+            return [0,0]
 
             # Add a row to the report
             #row = [ "N/A" for i in boards]
