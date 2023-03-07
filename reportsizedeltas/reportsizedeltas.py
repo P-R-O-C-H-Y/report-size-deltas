@@ -341,10 +341,10 @@ class ReportSizeDeltas:
                     # Add the absolute memory data to the cell
                     if sketch[self.ReportKeys.compilation_success] is not True:
                         value = "X"
-                    elif sketch[self.ReportKeys.warnings] is not None:
-                        value = sketch[self.ReportKeys.warnings]
+                    elif sketch[self.ReportKeys.warnings.delta.absolute] != 0:
+                        value = sketch[self.ReportKeys.warnings.delta.absolute]
                     else:
-                        value = 0
+                        value = "Ok"
 
                     summary_report_data[row_number][column_number] = value
 
