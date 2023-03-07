@@ -348,8 +348,10 @@ class ReportSizeDeltas:
                         row[0] = library_name
                         summary_report_data.append(row)
                         row_number = len(summary_report_data) - 1
+                        print("CREATED NEW")
                     else:
                         row_number = position[0]
+                        print("FOUND")
 
                     if sketch[self.ReportKeys.compilation_success] is not True:
                         value = "X"
@@ -357,7 +359,7 @@ class ReportSizeDeltas:
                         value = sketch[self.ReportKeys.warnings][self.ReportKeys.delta][self.ReportKeys.absolute]
                     else:
                         value = "Ok"
-                        
+
                     print(row_number,end = " ")
                     print(column_number,end = " ")
                     print()
