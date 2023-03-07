@@ -342,7 +342,7 @@ class ReportSizeDeltas:
                         row_heading=library_name
                     )
                     print(position)
-                    if position[0] == 0:
+                    if position == 0:
                         # Add a row to the report
                         row = [ "N/A" for i in boards]
                         row.append("N/A")
@@ -351,7 +351,7 @@ class ReportSizeDeltas:
                         row_number = len(summary_report_data) - 1
                         print("CREATED NEW")
                     else:
-                        row_number = position[0]
+                        row_number = position
                         print("FOUND")
 
                     if sketch[self.ReportKeys.compilation_success] is not True:
@@ -715,7 +715,12 @@ def get_report_row_number(report, row_heading):
     Keyword arguments:
     row_heading -- the text of the column heading. If it doesn't exist, a column will be created with this heading.
     """
-    return np.array(np.where(report == row_heading)).T
+    for i in summary_report_data:
+        if i[0] == row_heading:
+            return i
+    
+    return 0
+
     """
     for i, e in enumerate(report):
         try:
