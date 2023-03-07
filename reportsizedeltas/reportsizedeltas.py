@@ -715,9 +715,10 @@ def get_report_row_number(report, row_heading):
     Keyword arguments:
     row_heading -- the text of the column heading. If it doesn't exist, a column will be created with this heading.
     """
+    count = 0
     for i in report:
         if i[0] == row_heading:
-            return i
+            return report.index(i)
     
     return 0
 
