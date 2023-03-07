@@ -336,7 +336,8 @@ class ReportSizeDeltas:
                     # Add a row to the report
                     row = [ 0 for i in boards]
                     #row = [ for _ in range(len(summary_report_data[0]))]
-                    row[0] = sketch[self.ReportKeys.name]
+                    path = splitall(sketch[self.ReportKeys.name])
+                    row[0] = path[4]
                     summary_report_data.append(row)
                     # Add the absolute memory data to the cell
                     if sketch[self.ReportKeys.compilation_success] is not True:
@@ -791,6 +792,20 @@ def generate_csv_table(row_list):
 
     return csv_string.getvalue()
 
+def splitall(path):
+    allparts = []
+    while 1:
+        parts = os.path.split(path)
+        if parts[0] == path:  # sentinel for absolute paths
+            allparts.insert(0, parts[0])
+            break
+        elif parts[1] == path: # sentinel for relative paths
+            allparts.insert(0, parts[1])
+            break
+        else:
+            path = parts[0]
+            allparts.insert(0, parts[1])
+    return allparts
 
 # Only execute the following code if the script is run directly, not imported
 if __name__ == "__main__":
