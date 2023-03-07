@@ -715,7 +715,8 @@ def get_report_row_number(report, row_heading):
     Keyword arguments:
     row_heading -- the text of the column heading. If it doesn't exist, a column will be created with this heading.
     """
-
+    return np.array(np.where(report == row_heading)).T
+    """
     for i, e in enumerate(report):
         try:
             return i, e.index(row_heading)
@@ -728,6 +729,7 @@ def get_report_row_number(report, row_heading):
             #summary_report_data.append(row)
 
             #return 
+    """
     """
     try:
         row_number = report[0].index(row_heading, 1)
