@@ -337,7 +337,7 @@ class ReportSizeDeltas:
                     row = [ 0 for i in boards]
                     #row = [ for _ in range(len(summary_report_data[0]))]
                     path = splitall(sketch[self.ReportKeys.name])
-                    row[0] = path[4]
+                    row[0] = path[5]
                     summary_report_data.append(row)
                     # Add the absolute memory data to the cell
                     if sketch[self.ReportKeys.compilation_success] is not True:
