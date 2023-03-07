@@ -391,7 +391,7 @@ class ReportSizeDeltas:
                             maximum=size_data[self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.maximum]
                         )
                     )
-        """
+        
         # Generate detailed report data
         full_report_data = [[fqbn_column_heading]]
         row_number = 0
@@ -424,13 +424,14 @@ class ReportSizeDeltas:
                         full_report_data[row_number][column_number + 1] = (
                             size_data[self.ReportKeys.delta][self.ReportKeys.relative]
                         )
-
+        """
         # Add comment heading
         report_markdown = self.report_key_beginning + sketches_reports[0][self.ReportKeys.commit_hash] + "**\n\n"
 
         # Add summary table
         report_markdown = report_markdown + generate_markdown_table(row_list=summary_report_data) + "\n"
 
+        """
         # Add full table
         report_markdown_with_table = (report_markdown
                                       + "<details>\n"
@@ -453,7 +454,7 @@ class ReportSizeDeltas:
 
             if len(report_markdown_with_csv) < maximum_report_length:
                 report_markdown = report_markdown_with_csv
-
+        """
         logger.debug("Report:\n" + report_markdown)
         return report_markdown
 
