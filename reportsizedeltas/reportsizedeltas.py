@@ -347,7 +347,7 @@ class ReportSizeDeltas:
                         row.append("N/A")
                         row[0] = library_name
                         summary_report_data.append(row)
-                        row_number = len(summary_report_data)
+                        row_number = len(summary_report_data) - 1
                     else:
                         row_number = position[0]
 
@@ -357,6 +357,7 @@ class ReportSizeDeltas:
                         value = sketch[self.ReportKeys.warnings][self.ReportKeys.delta][self.ReportKeys.absolute]
                     else:
                         value = "Ok"
+                    print("row_number = " + row_number + " - column_number = " + column_number)
 
                     summary_report_data[row_number][column_number] = value
         
