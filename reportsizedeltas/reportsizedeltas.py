@@ -326,15 +326,16 @@ class ReportSizeDeltas:
 
         summary_report_data = [[fqbn_column_heading]]
         row_number = 1
-        column_number = 1
+        column_number = 0
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
                 summary_report_data[0].append(boards[self.ReportKeys.board])
-
+                column_number += 1
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
                     # Add a row to the report
                     row = [ 0 for i in boards]
+                    row.append(0)
                     #row = [ for _ in range(len(summary_report_data[0]))]
                     path = splitall(sketch[self.ReportKeys.name])
                     row[0] = path[5]
