@@ -341,7 +341,7 @@ class ReportSizeDeltas:
                         report=summary_report_data,
                         row_heading=library_name
                     )
-                    if position == [0,0]:
+                    if position[0] == 0:
                         # Add a row to the report
                         row = [ "N/A" for i in boards]
                         row.append("N/A")
