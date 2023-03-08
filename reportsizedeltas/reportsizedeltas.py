@@ -675,7 +675,7 @@ def generate_markdown_table(row_list):
     # Generate heading row
     markdown_table = "|".join([str(cell) for cell in row_list[0]]) + "\n"
     # Add divider row
-    markdown_table = markdown_table + "|".join(["-" for _ in row_list[0]]) + "\n"
+    markdown_table = markdown_table + "-|" + "|".join([":-:" for _ in (row_list[0]-1)]) + "\n"
     # Add data rows
     for row in row_list[1:]:
         markdown_table = markdown_table + "|".join([str(cell) for cell in row]) + "\n"
