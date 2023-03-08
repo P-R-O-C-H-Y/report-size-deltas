@@ -59,7 +59,7 @@ class ReportSizeDeltas:
     artifact_name -- name of the workflow artifact that contains the memory usage data
     token -- GitHub access token
     """
-    report_key_beginning = "Library example build test"
+    report_key_beginning = "External libraries build test"
 
     class ReportKeys:
         """Key names used in the sketches report dictionary"""
@@ -366,7 +366,7 @@ class ReportSizeDeltas:
                     summary_report_data[row_number][column_number] = value
 
         # Add comment heading
-        report_markdown = self.report_key_beginning + "**\n\n"
+        report_markdown = self.report_key_beginning + "\n\n"
 
         # Add summary table
         report_markdown = report_markdown + generate_markdown_table(row_list=summary_report_data) + "\n"
