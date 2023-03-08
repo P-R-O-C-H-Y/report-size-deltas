@@ -322,9 +322,9 @@ class ReportSizeDeltas:
         # > This equals a limit of 65,536 4-byte unicode characters.
         maximum_report_length = 262144
 
-        ok_emoji = ":green_circle:"
-        warning_emoji = ":yellow_circle:"
-        fail_emoji = ":red_circle:"
+        ok_emoji = ":white_check_mark:"
+        warning_emoji = ":warning:"
+        fail_emoji = ":x:"
 
         fqbn_column_heading = "Library"
 
