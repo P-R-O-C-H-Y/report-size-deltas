@@ -322,6 +322,10 @@ class ReportSizeDeltas:
         # > This equals a limit of 65,536 4-byte unicode characters.
         maximum_report_length = 262144
 
+        ok_emoji = ":green_heart:"
+        warning_emoji = ":grey_question:"
+        fail_emoji = ":small_red_triangle:"
+
         fqbn_column_heading = "Library"
 
         summary_report_data = [[fqbn_column_heading]]
@@ -350,21 +354,15 @@ class ReportSizeDeltas:
                         row[0] = library_name
                         summary_report_data.append(row)
                         row_number = len(summary_report_data) - 1
-                        print("CREATED NEW")
                     else:
                         row_number = position
-                        print("FOUND")
 
                     if sketch[self.ReportKeys.compilation_success] is not True:
-                        value = "X"
+                        value = fail_emoji
                     elif sketch[self.ReportKeys.warnings][self.ReportKeys.delta][self.ReportKeys.absolute] != 0:
-                        value = sketch[self.ReportKeys.warnings][self.ReportKeys.delta][self.ReportKeys.absolute]
+                        value = warning_emoji + " " + sketch[self.ReportKeys.warnings][self.ReportKeys.delta][self.ReportKeys.absolute]
                     else:
-                        value = "Ok"
-
-                    print(row_number,end = " ")
-                    print(column_number,end = " ")
-                    print()
+                        value = ok_emoji
 
                     summary_report_data[row_number][column_number] = value
         
@@ -373,106 +371,12 @@ class ReportSizeDeltas:
                 print(y,end = " ")
             print()
 
-        # Generate summary report data
-        """summary_report_data = [[fqbn_column_heading]]
-        row_number = 0
-        for fqbns_data in sketches_reports:
-            for fqbn_data in fqbns_data[self.ReportKeys.boards]:
-                row_number += 1
-                # Add a row to the report
-                row = ["" for _ in range(len(summary_report_data[0]))]
-                row[0] = fqbn_data[self.ReportKeys.board]
-                summary_report_data.append(row)
-
-                # Populate the row with data
-                for size_data in fqbn_data[self.ReportKeys.sizes]:
-                    # Determine column number for this memory type
-                    column_number = get_report_column_number(
-                        report=summary_report_data,
-                        column_heading=size_data[self.ReportKeys.name]
-                    )
-
-                    # Add the absolute memory data to the cell
-                    summary_report_data[row_number][column_number] = (
-                        get_summary_value(
-                            show_emoji=True,
-                            minimum=size_data[self.ReportKeys.delta][self.ReportKeys.absolute][self.ReportKeys.minimum],
-                            maximum=size_data[self.ReportKeys.delta][self.ReportKeys.absolute][self.ReportKeys.maximum]
-                        )
-                    )
-
-                    # Add the relative memory data to the cell
-                    summary_report_data[row_number][column_number + 1] = (
-                        get_summary_value(
-                            show_emoji=False,
-                            minimum=size_data[self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.minimum],
-                            maximum=size_data[self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.maximum]
-                        )
-                    )
-        
-        # Generate detailed report data
-        full_report_data = [[fqbn_column_heading]]
-        row_number = 0
-        for fqbns_data in sketches_reports:
-            for fqbn_data in fqbns_data[self.ReportKeys.boards]:
-                row_number += 1
-                # Add a row to the report
-                row = ["" for _ in range(len(full_report_data[0]))]
-                row[0] = fqbn_data[self.ReportKeys.board]
-                full_report_data.append(row)
-
-                # Populate the row with data
-                for sketch in fqbn_data[self.ReportKeys.sketches]:
-                    for size_data in sketch[self.ReportKeys.sizes]:
-                        # Determine column number for this memory type
-                        column_number = get_report_column_number(
-                            report=full_report_data,
-                            column_heading=(
-                                sketch[self.ReportKeys.name] + "<br>"
-                                + size_data[self.ReportKeys.name]
-                            )
-                        )
-
-                        # Add the absolute memory data to the cell
-                        full_report_data[row_number][column_number] = (
-                            size_data[self.ReportKeys.delta][self.ReportKeys.absolute]
-                        )
-
-                        # Add the relative memory data to the cell
-                        full_report_data[row_number][column_number + 1] = (
-                            size_data[self.ReportKeys.delta][self.ReportKeys.relative]
-                        )
-        """
         # Add comment heading
         report_markdown = self.report_key_beginning + sketches_reports[0][self.ReportKeys.commit_hash] + "**\n\n"
 
         # Add summary table
         report_markdown = report_markdown + generate_markdown_table(row_list=summary_report_data) + "\n"
 
-        """
-        # Add full table
-        report_markdown_with_table = (report_markdown
-                                      + "<details>\n"
-                                        "<summary>Click for full report table</summary>\n\n")
-        report_markdown_with_table = (report_markdown_with_table
-                                      + generate_markdown_table(row_list=full_report_data)
-                                      + "\n</details>\n\n")
-
-        if len(report_markdown_with_table) < maximum_report_length:
-            report_markdown = report_markdown_with_table
-
-            # Add full CSV
-            report_markdown_with_csv = (report_markdown
-                                        + "<details>\n"
-                                          "<summary>Click for full report CSV</summary>\n\n"
-                                          "```\n")
-            report_markdown_with_csv = (report_markdown_with_csv
-                                        + generate_csv_table(row_list=full_report_data)
-                                        + "```\n</details>")
-
-            if len(report_markdown_with_csv) < maximum_report_length:
-                report_markdown = report_markdown_with_csv
-        """
         logger.debug("Report:\n" + report_markdown)
         return report_markdown
 
