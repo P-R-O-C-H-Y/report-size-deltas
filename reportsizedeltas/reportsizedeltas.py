@@ -372,23 +372,12 @@ class ReportSizeDeltas:
             print()
 
         # Add comment heading
-        report_markdown = self.report_key_beginning
+        # report_markdown = self.report_key_beginning + sketches_reports[0][self.ReportKeys.commit_hash] + "**\n\n"
 
         # Add summary table
         report_markdown = report_markdown + generate_markdown_table(row_list=summary_report_data) + "\n"
 
-        # Add full CSV
-        report_markdown_with_csv = (report_markdown
-                                    + "<details>\n"
-                                        "<summary>Click for full report CSV</summary>\n\n"
-                                        "```\n")
-        report_markdown_with_csv = (report_markdown_with_csv
-                                    + generate_csv_table(row_list=summary_report_data)
-                                    + "```\n</details>")
-
-        if len(report_markdown_with_csv) < maximum_report_length:
-            report_markdown = report_markdown_with_csv
-
+        logger.debug("Report:\n" + report_markdown)
         return report_markdown
 
     def comment_report(self, pr_number, report_markdown):
