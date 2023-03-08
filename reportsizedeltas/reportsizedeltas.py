@@ -372,7 +372,7 @@ class ReportSizeDeltas:
             print()
 
         # Add comment heading
-        report_markdown = self.report_key_beginning + sketches_reports[0][self.ReportKeys.commit_hash] + "**\n\n"
+        report_markdown = self.report_key_beginning
 
         # Add summary table
         report_markdown = report_markdown + generate_markdown_table(row_list=summary_report_data) + "\n"
