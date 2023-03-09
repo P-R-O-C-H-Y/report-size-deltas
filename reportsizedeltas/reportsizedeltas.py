@@ -90,7 +90,7 @@ class ReportSizeDeltas:
         if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
             # The sketches reports will be in a local folder location specified by the user
             self.report_size_deltas_from_local_reports()
-        else if os.environ["GITHUB_EVENT_NAME"] == "push": #to be changed to schedule
+        elif os.environ["GITHUB_EVENT_NAME"] == "push": #to be changed to schedule
             self.report_size_deltas_from_local_reports_on_schedule()
         else:
             # The script is being run from a workflow triggered by something other than a PR
