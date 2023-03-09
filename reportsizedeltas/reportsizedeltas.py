@@ -112,7 +112,7 @@ class ReportSizeDeltas:
 
     def report_size_deltas_from_local_reports_on_schedule(self):
         """Comment a report of memory usage change to the file ."""
-        report_destination = os.environ["INPUT_DESTINATION_FILE"]
+        report_destination = os.environ["INPUT_DESTINATION-FILE"]
         sketches_reports_folder = pathlib.Path(os.environ["GITHUB_WORKSPACE"], self.sketches_reports_source)
         sketches_reports = self.get_sketches_reports(artifact_folder_object=sketches_reports_folder)
 
