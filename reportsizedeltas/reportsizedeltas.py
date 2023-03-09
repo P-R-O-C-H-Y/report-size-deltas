@@ -90,6 +90,8 @@ class ReportSizeDeltas:
         if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
             # The sketches reports will be in a local folder location specified by the user
             self.report_size_deltas_from_local_reports()
+        else if os.environ["GITHUB_EVENT_NAME"] == "push": #to be changed to schedule
+            self.report_size_deltas_from_local_reports_on_schedule()
         else:
             # The script is being run from a workflow triggered by something other than a PR
             # Scan the repository's pull requests and comment memory usage change reports where appropriate.
@@ -107,6 +109,22 @@ class ReportSizeDeltas:
                 pr_number = json.load(github_event_file)["pull_request"]["number"]
 
             self.comment_report(pr_number=pr_number, report_markdown=report)
+
+    def report_size_deltas_from_local_reports_on_schedule(self):
+        """Comment a report of memory usage change to the file ."""
+        report_destination = os.environ["INPUT_DESTINATION_FILE"]
+        sketches_reports_folder = pathlib.Path(os.environ["GITHUB_WORKSPACE"], self.sketches_reports_source)
+        sketches_reports = self.get_sketches_reports(artifact_folder_object=sketches_reports_folder)
+
+        if sketches_reports:
+            report = self.generate_report(sketches_reports=sketches_reports)
+
+            with open(report_destination, "w") as file:
+                file.write(report)
+            #with open(file=os.environ["GITHUB_EVENT_PATH"]) as github_event_file:
+            #    pr_number = json.load(github_event_file)["pull_request"]["number"]
+
+            #self.comment_report(pr_number=pr_number, report_markdown=report)
 
     def report_size_deltas_from_workflow_artifacts(self):
         """Scan the repository's pull requests and comment memory usage change reports where appropriate."""
