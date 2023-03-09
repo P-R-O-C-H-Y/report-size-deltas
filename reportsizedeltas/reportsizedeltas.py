@@ -13,6 +13,8 @@ import urllib.parse
 import urllib.request
 import zipfile
 
+from datetime import datetime
+
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
@@ -119,8 +121,19 @@ class ReportSizeDeltas:
         if sketches_reports:
             report = self.generate_report(sketches_reports=sketches_reports)
 
+            # datetime object containing current date and time
+            now = datetime.now()
+            
+            print("now =", now)
+
+            # dd/mm/YY H:M:S
+            dt_string = now.strftime("%b-%d-%Y %H:%M:%S")
+            print("date and time =", dt_string)
+
             with open(report_destination, "w") as file:
                 file.write(report)
+                file.write("\nGenerated on: " + dt_string)
+
             #with open(file=os.environ["GITHUB_EVENT_PATH"]) as github_event_file:
             #    pr_number = json.load(github_event_file)["pull_request"]["number"]
 
