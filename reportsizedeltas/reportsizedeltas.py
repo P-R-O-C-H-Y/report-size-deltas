@@ -579,35 +579,6 @@ def get_page_count(link_header):
                 break
     return page_count
 
-
-def get_report_column_number(report, column_heading):
-    """Return the column number of the given heading.
-
-    Keyword arguments:
-    column_heading -- the text of the column heading. If it doesn't exist, a column will be created with this heading.
-    """
-    relative_column_heading = "%"
-
-    try:
-        column_number = report[0].index(column_heading, 1)
-    except ValueError:
-        # There is no existing column, so create columns for relative and absolute
-        column_number = len(report[0])
-
-        # Absolute column
-        # Add the heading
-        report[0].append(column_heading)
-        # Expand the size of the last (current) row to match the new number of columns
-        report[len(report) - 1].append("")
-
-        # Relative column
-        # Add the heading
-        report[0].append(relative_column_heading)
-        # Expand the size of the last (current) row to match the new number of columns
-        report[len(report) - 1].append("")
-
-    return column_number
-
 def get_report_row_number(report, row_heading):
     """Return the row number of the given heading.
 
@@ -618,47 +589,6 @@ def get_report_row_number(report, row_heading):
         if i[0] == row_heading:
             return report.index(i)
     return 0
-
-def get_summary_value(show_emoji, minimum, maximum):
-    """Return the Markdown formatted text for a memory change data cell in the report table.
-
-    Keyword arguments:
-    show_emoji -- whether to add the emoji change indicator
-    minimum -- minimum amount of change for this memory type
-    minimum -- maximum amount of change for this memory type
-    """
-    size_decrease_emoji = ":green_heart:"
-    size_ambiguous_emoji = ":grey_question:"
-    size_increase_emoji = ":small_red_triangle:"
-    not_applicable_indicator = "N/A"
-
-    value = None
-    if minimum == not_applicable_indicator:
-        value = not_applicable_indicator
-        emoji = None
-    elif minimum < 0 and maximum <= 0:
-        emoji = size_decrease_emoji
-    elif minimum == 0 and maximum == 0:
-        emoji = None
-    elif minimum >= 0 and maximum > 0:
-        emoji = size_increase_emoji
-    else:
-        emoji = size_ambiguous_emoji
-
-    if value is None:
-        # Prepend + to positive values to improve readability
-        if minimum > 0:
-            minimum = "+" + str(minimum)
-        if maximum > 0:
-            maximum = "+" + str(maximum)
-
-        value = str(minimum) + " - " + str(maximum)
-
-    if show_emoji and (emoji is not None):
-        value = emoji + " " + value
-
-    return value
-
 
 def generate_markdown_table(row_list):
     """Return the data formatted as a Markdown table
