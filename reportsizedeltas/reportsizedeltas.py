@@ -132,7 +132,7 @@ class ReportSizeDeltas:
 
             with open(report_destination, "w") as file:
                 file.write(report)
-                file.write("\nGenerated on: " + dt_string)
+                file.write("\nGenerated on: " + dt_string + "\n")
 
             #with open(file=os.environ["GITHUB_EVENT_PATH"]) as github_event_file:
             #    pr_number = json.load(github_event_file)["pull_request"]["number"]
