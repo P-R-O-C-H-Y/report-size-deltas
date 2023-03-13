@@ -373,7 +373,7 @@ class ReportSizeDeltas:
                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
                             value = fail_emoji
                         elif sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute] != 0:
-                            value = warning_emoji + " " + sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute]
+                            value = warning_emoji + " " + str(sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute])
                         else:
                             value = ok_emoji
                         value = value + " -> "
@@ -381,7 +381,7 @@ class ReportSizeDeltas:
                     if sketch[self.ReportKeys.compilation_success][self.ReportKeys.current][self.ReportKeys.absolute] is not True:
                         value = fail_emoji
                     elif sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute] != 0:
-                        value = warning_emoji + " " + sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute]
+                        value = warning_emoji + " " + str(sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute])
                     else:
                         value = ok_emoji
 
