@@ -383,7 +383,7 @@ class ReportSizeDeltas:
                         # Add a row to the report
                         #row = [ "N/A" for i in boards]
                         #row = [ "N/A" for board_count]
-                        row = ["N/A"] * board_count
+                        row = ["N/A"] * (board_count + 1)
                         row.append("N/A")
                         row[0] = library_name
                         summary_report_data.append(row)
