@@ -125,7 +125,7 @@ class ReportSizeDeltas:
 
             # datetime object containing current date and time
             now = datetime.now()
-
+            
             # dd/mm/YY H:M:S
             dt_string = now.strftime("%b-%d-%Y %H:%M:%S")
             print("date and time =", dt_string)
@@ -316,7 +316,20 @@ class ReportSizeDeltas:
                 # Combine sketches reports into an array
                 with open(file=report_filename.joinpath(report_filename)) as report_file:
                     report_data = json.load(report_file)
-                    sketches_reports.append(report_data)
+                    if (
+                        (self.ReportKeys.boards not in report_data)
+                        or (self.ReportKeys.maximum
+                            not in report_data[self.ReportKeys.boards][0][self.ReportKeys.sizes][0])
+                    ):
+                        # Sketches reports use an old format, skip
+                        print("Old format sketches report found, skipping")
+                        continue
+
+                    for fqbn_data in report_data[self.ReportKeys.boards]:
+                        #if self.ReportKeys.sizes in fqbn_data:
+                            # The report contains deltas data
+                            sketches_reports.append(report_data)
+                            break
 
         if not sketches_reports:
             print("No size deltas data found in workflow artifact for this PR. The compile-examples action's "
