@@ -345,7 +345,7 @@ class ReportSizeDeltas:
         fail_emoji = ":x:"
 
         fqbn_column_heading = "Library"
-
+        print(sketches_reports)
         summary_report_data = [[fqbn_column_heading]]
         row_number = 0
         column_number = 0
