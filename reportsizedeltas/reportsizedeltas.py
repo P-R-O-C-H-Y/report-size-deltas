@@ -316,18 +316,7 @@ class ReportSizeDeltas:
                 # Combine sketches reports into an array
                 with open(file=report_filename.joinpath(report_filename)) as report_file:
                     report_data = json.load(report_file)
-                    if (self.ReportKeys.boards not in report_data):
-                        # Sketches reports use an old format, skip
-                        print("Old format sketches report found, skipping")
-                        continue
-
-                    for fqbn_data in report_data[self.ReportKeys.boards]:
-                        print(fqbn_data)
-                        if self.ReportKeys.compilation_success in fqbn_data:
-                            # The report contains deltas data
-                            print(self.ReportKeys.compilation_success)
-                            sketches_reports.append(report_data)
-                            break
+                    sketches_reports.append(report_data)
 
         if not sketches_reports:
             print("No size deltas data found in workflow artifact for this PR. The compile-examples action's "
