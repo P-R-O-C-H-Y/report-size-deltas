@@ -351,7 +351,7 @@ class ReportSizeDeltas:
                 column_number += 1
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
-
+                    cell_value = ""
                     path = splitall(sketch[self.ReportKeys.name])
                     library_name = path[5]
                     # Determine row number for library
@@ -375,21 +375,21 @@ class ReportSizeDeltas:
                     # for PR print before - after changes results
                     if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
-                            value = fail_emoji
+                            cell_value = fail_emoji
                         elif sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute] != 0:
-                            value = warning_emoji + " " + str(sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute])
+                            cell_value = warning_emoji + " " + str(sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute])
                         else:
-                            value = ok_emoji
-                        value = value + " -> "
+                            cell_value = ok_emoji
+                        cell_value += " -> "
 
                     if sketch[self.ReportKeys.compilation_success][self.ReportKeys.current][self.ReportKeys.absolute] is not True:
-                        value = fail_emoji
+                        cell_value += fail_emoji
                     elif sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute] != 0:
-                        value = warning_emoji + " " + str(sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute])
+                        cell_value += warning_emoji + " " + str(sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute])
                     else:
-                        value = ok_emoji
+                        cell_value += ok_emoji
 
-                    summary_report_data[row_number][column_number] = value
+                    summary_report_data[row_number][column_number] = cell_value
 
         # Add comment heading
         report_markdown = "### " + self.report_key_beginning + "\n\n"
