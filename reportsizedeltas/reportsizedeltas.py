@@ -356,8 +356,8 @@ class ReportSizeDeltas:
                 column_number += 1
 
                 #DBG
-                print("\n" + board_name[2].upper())
-
+                #print("\n" + board_name[2].upper())
+                print(boards)
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
                     cell_value = ""
@@ -370,7 +370,7 @@ class ReportSizeDeltas:
                     )
                     if position == 0:
                         # Add a row to the report
-                        row = [ "N/A" for i in fqbns_data[self.ReportKeys.boards]]
+                        row = [ "N/A" for i in boards]
                         row.append("N/A")
                         row[0] = library_name
                         summary_report_data.append(row)
