@@ -375,6 +375,7 @@ class ReportSizeDeltas:
                     print("\n" + library_name)
                     print("\nposition = " + str(position))
                     print("\n[row][column] - [" + str(row_number) + "][" + str(column_number) +"]")
+                    print(row)
                     # for PR print before - after changes results
                     if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
