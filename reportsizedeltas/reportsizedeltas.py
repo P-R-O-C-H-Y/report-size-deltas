@@ -349,6 +349,10 @@ class ReportSizeDeltas:
                 board_name = boards[self.ReportKeys.board].split(":")
                 summary_report_data[0].append(board_name[2].upper())
                 column_number += 1
+
+                #DBG
+                print("\n" + board_name.upper())
+
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
                     cell_value = ""
@@ -368,10 +372,9 @@ class ReportSizeDeltas:
                         row_number = len(summary_report_data) - 1
                     else:
                         row_number = position
-
-                    print(sketch[self.ReportKeys.compilation_success])
-                    print("\n")
-                    print(sketch[self.ReportKeys.warnings])
+                    print("\n" + library_name)
+                    print("\nposition = " + str(position))
+                    print("\n[row][column] - [" + str(row_number) + "][" + str(column_number) +"]")
                     # for PR print before - after changes results
                     if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
