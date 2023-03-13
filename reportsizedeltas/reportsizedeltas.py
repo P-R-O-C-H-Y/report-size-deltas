@@ -321,7 +321,7 @@ class ReportSizeDeltas:
                         #if self.ReportKeys.sizes in fqbn_data:
                             # The report contains deltas data
                             sketches_reports.append(report_data)
-                            break
+                            
 
         if not sketches_reports:
             print("No size deltas data found in workflow artifact for this PR. The compile-examples action's "
