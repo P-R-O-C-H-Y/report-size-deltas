@@ -360,15 +360,6 @@ class ReportSizeDeltas:
                 summary_report_data[0].append(board_name[2].upper())
                 column_number += 1
 
-                #DBG
-                #print("\n" + board_name[2].upper())
-                print("\n")
-                print(str(len(fqbns_data[self.ReportKeys.boards])))
-                print("\n")
-                print(str(len(boards)))
-                print("\n")
-                print(board_count)
-                print("\n")
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
                     cell_value = ""
@@ -382,18 +373,13 @@ class ReportSizeDeltas:
                     if position == 0:
                         # Add a row to the report
                         #row = [ "N/A" for i in boards]
-                        #row = [ "N/A" for board_count]
                         row = ["N/A"] * (board_count + 1)
-                        row.append("N/A")
+                        #row.append("N/A")
                         row[0] = library_name
                         summary_report_data.append(row)
                         row_number = len(summary_report_data) - 1
                     else:
                         row_number = position
-                    print("\n" + library_name)
-                    print("\nposition = " + str(position))
-                    print("\n[row][column] - [" + str(row_number) + "][" + str(column_number) +"]")
-                    print(row)
                     # for PR print before - after changes results
                     if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
