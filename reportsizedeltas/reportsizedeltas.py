@@ -69,16 +69,16 @@ class ReportSizeDeltas:
         board = "board"
         commit_hash = "commit_hash"
         commit_url = "commit_url"
-        sizes = "sizes"
+        #sizes = "sizes"
         warnings = "warnings"
         name = "name"
-        absolute = "absolute"
-        relative = "relative"
-        current = "current"
-        previous = "previous"
-        delta = "delta"
-        minimum = "minimum"
-        maximum = "maximum"
+        #absolute = "absolute"
+        #relative = "relative"
+        #previous = "previous"
+        #current = "current"
+        #delta = "delta"
+        #minimum = "minimum"
+        #maximum = "maximum"
         sketches = "sketches"
         compilation_success = "compilation_success"
 
@@ -94,6 +94,8 @@ class ReportSizeDeltas:
             self.report_size_deltas_from_local_reports()
         elif os.environ["GITHUB_EVENT_NAME"] == "schedule":
             self.report_size_deltas_from_local_reports_on_schedule()
+        elif os.environ["GITHUB_EVENT_NAME"] == "push":              #to be removed
+            self.report_size_deltas_from_local_reports_on_schedule() #to be removed
         else:
             # The script is being run from a workflow triggered by something other than a PR
             # Scan the repository's pull requests and comment memory usage change reports where appropriate.
@@ -321,24 +323,19 @@ class ReportSizeDeltas:
                 # Combine sketches reports into an array
                 with open(file=report_filename.joinpath(report_filename)) as report_file:
                     report_data = json.load(report_file)
-                    if (
-                        (self.ReportKeys.boards not in report_data)
-                        or (self.ReportKeys.maximum
-                            not in report_data[self.ReportKeys.boards][0][self.ReportKeys.sizes][0])
-                    ):
+                    if (self.ReportKeys.boards not in report_data):
                         # Sketches reports use an old format, skip
                         print("Old format sketches report found, skipping")
                         continue
 
                     for fqbn_data in report_data[self.ReportKeys.boards]:
-                        if self.ReportKeys.sizes in fqbn_data:
-                            # The report contains deltas data
+                        if self.ReportKeys.sketches in fqbn_data:
+                            # The report contains compilation data
                             sketches_reports.append(report_data)
                             break
 
         if not sketches_reports:
-            print("No size deltas data found in workflow artifact for this PR. The compile-examples action's "
-                  "enable-size-deltas-report input must be set to true to produce size deltas data.")
+            print("No compile data found in workflow artifact.")
 
         return sketches_reports
 
@@ -369,7 +366,7 @@ class ReportSizeDeltas:
                 column_number += 1
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
-
+                    print("\n" + sketch[self.ReportKeys.name])
                     path = splitall(sketch[self.ReportKeys.name])
                     library_name = path[5]
                     # Determine row number for library
@@ -389,11 +386,12 @@ class ReportSizeDeltas:
 
                     if sketch[self.ReportKeys.compilation_success] is not True:
                         value = fail_emoji
-                    elif sketch[self.ReportKeys.warnings][self.ReportKeys.delta][self.ReportKeys.absolute] != 0:
-                        value = warning_emoji + " " + sketch[self.ReportKeys.warnings][self.ReportKeys.delta][self.ReportKeys.absolute]
+                    elif sketch[self.ReportKeys.warnings] != 0:
+                        value = warning_emoji + " " + str(sketch[self.ReportKeys.warnings])
                     else:
                         value = ok_emoji
 
+                    print("\n[" + str(row_number) + "][" + str(column_number) + "]")
                     summary_report_data[row_number][column_number] = value
 
         # Add comment heading
