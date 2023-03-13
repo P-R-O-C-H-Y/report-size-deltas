@@ -322,8 +322,10 @@ class ReportSizeDeltas:
                         continue
 
                     for fqbn_data in report_data[self.ReportKeys.boards]:
+                        print(fqbn_data)
                         if self.ReportKeys.compilation_success in fqbn_data:
                             # The report contains deltas data
+                            print(self.ReportKeys.compilation_success)
                             sketches_reports.append(report_data)
                             break
 
