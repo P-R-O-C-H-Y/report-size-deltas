@@ -359,7 +359,7 @@ class ReportSizeDeltas:
                 #print("\n" + board_name[2].upper())
                 print(fqbns_data[self.ReportKeys.boards])
                 print("\n")
-                print(str(len(fqbns_data)))
+                print(str(len(fqbns_data[self.ReportKeys.boards])))
                 print("\n")
                 print(str(len(boards)))
                 print("\n")
