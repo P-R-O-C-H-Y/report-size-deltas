@@ -370,7 +370,7 @@ class ReportSizeDeltas:
                     )
                     if position == 0:
                         # Add a row to the report
-                        row = [ "N/A" for i in boards]
+                        row = [ "N/A" for i in fqbns_data[self.ReportKeys.boards]]
                         row.append("N/A")
                         row[0] = library_name
                         summary_report_data.append(row)
