@@ -18,8 +18,6 @@ from datetime import datetime
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
-fqbns_count = 0
-
 def main():
     set_verbosity(enable_verbosity=False)
 
@@ -322,7 +320,6 @@ class ReportSizeDeltas:
                         #if self.ReportKeys.sizes in fqbn_data:
                             # The report contains deltas data
                             sketches_reports.append(report_data)
-                            fqbns_count += 1
                             break
 
         if not sketches_reports:
@@ -347,7 +344,7 @@ class ReportSizeDeltas:
         fail_emoji = ":x:"
 
         fqbn_column_heading = "Library"
-        print(sketches_reports)
+
         summary_report_data = [[fqbn_column_heading]]
         row_number = 0
         column_number = 0
@@ -365,15 +362,12 @@ class ReportSizeDeltas:
 
                 #DBG
                 #print("\n" + board_name[2].upper())
-                print(fqbns_data[self.ReportKeys.boards])
                 print("\n")
                 print(str(len(fqbns_data[self.ReportKeys.boards])))
                 print("\n")
                 print(str(len(boards)))
                 print("\n")
                 print(board_count)
-                print("\n")
-                print(fqbns_count)
                 print("\n")
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
