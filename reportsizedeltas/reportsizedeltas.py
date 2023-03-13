@@ -370,6 +370,7 @@ class ReportSizeDeltas:
                         row_number = position
 
                     print(sketch[self.ReportKeys.compilation_success])
+                    print("\n")
                     print(sketch[self.ReportKeys.warnings])
                     # for PR print before - after changes results
                     if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
