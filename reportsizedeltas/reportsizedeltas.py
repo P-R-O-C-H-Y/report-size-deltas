@@ -381,7 +381,7 @@ class ReportSizeDeltas:
                         row_number = position
                     # for PR print before - after changes results
                     if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
-                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
+                        if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
                             value = fail_emoji
                         elif sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute] != 0:
                             value = warning_emoji + " " + sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute]
