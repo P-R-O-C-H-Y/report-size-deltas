@@ -316,14 +316,6 @@ class ReportSizeDeltas:
                 # Combine sketches reports into an array
                 with open(file=report_filename.joinpath(report_filename)) as report_file:
                     report_data = json.load(report_file)
-                    if (
-                        (self.ReportKeys.boards not in report_data)
-                        or (self.ReportKeys.maximum
-                            not in report_data[self.ReportKeys.boards][0][self.ReportKeys.sizes][0])
-                    ):
-                        # Sketches reports use an old format, skip
-                        print("Old format sketches report found, skipping")
-                        continue
 
                     for fqbn_data in report_data[self.ReportKeys.boards]:
                         #if self.ReportKeys.sizes in fqbn_data:
