@@ -351,7 +351,7 @@ class ReportSizeDeltas:
                 column_number += 1
 
                 #DBG
-                print("\n" + board_name.upper())
+                print("\n" + board_name[2].upper())
 
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
