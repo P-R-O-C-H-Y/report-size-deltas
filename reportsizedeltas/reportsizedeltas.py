@@ -368,6 +368,9 @@ class ReportSizeDeltas:
                         row_number = len(summary_report_data) - 1
                     else:
                         row_number = position
+
+                    print(sketch[self.ReportKeys.compilation_success])
+                    print(sketch[self.ReportKeys.warnings])
                     # for PR print before - after changes results
                     if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
