@@ -94,6 +94,8 @@ class ReportSizeDeltas:
             self.report_size_deltas_from_local_reports()
         elif os.environ["GITHUB_EVENT_NAME"] == "schedule":
             self.report_size_deltas_from_local_reports_on_schedule()
+        elif os.environ["GITHUB_EVENT_NAME"] == "push":
+            self.report_size_deltas_from_local_reports_on_schedule()
         else:
             # The script is being run from a workflow triggered by something other than a PR
             # Scan the repository's pull requests and comment memory usage change reports where appropriate.
@@ -124,8 +126,6 @@ class ReportSizeDeltas:
             # datetime object containing current date and time
             now = datetime.now()
             
-            print("now =", now)
-
             # dd/mm/YY H:M:S
             dt_string = now.strftime("%b-%d-%Y %H:%M:%S")
             print("date and time =", dt_string)
@@ -133,11 +133,6 @@ class ReportSizeDeltas:
             with open(report_destination, "w") as file:
                 file.write(report)
                 file.write("\nGenerated on: " + dt_string + "\n")
-
-            #with open(file=os.environ["GITHUB_EVENT_PATH"]) as github_event_file:
-            #    pr_number = json.load(github_event_file)["pull_request"]["number"]
-
-            #self.comment_report(pr_number=pr_number, report_markdown=report)
 
     def report_size_deltas_from_workflow_artifacts(self):
         """Scan the repository's pull requests and comment memory usage change reports where appropriate."""
