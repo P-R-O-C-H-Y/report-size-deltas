@@ -349,10 +349,7 @@ class ReportSizeDeltas:
         maximum_report_length = 262144
 
         cell_key_list = ["success","warning","error"]
-        """Key names used in the cell for each library/target"""
-        succcess = "success"
-        warning = "warning"
-        error = "error"
+
         ok_emoji = ":white_check_mark:"
         warning_emoji = ":warning:"
         fail_emoji = ":x:"
@@ -386,7 +383,7 @@ class ReportSizeDeltas:
                         # Add a row to the report
                         #row = [ "N/A" for i in boards]
                         row = [library_name]
-                        row.extend([dict(zip(cell_key_list, [0]*len(cell_key_list)))] for x in range(board_count))
+                        row.extend(dict(zip(cell_key_list, [0]*len(cell_key_list))) for x in range(board_count))
                         #row.append("N/A")
                         #row[0] = library_name
                         summary_report_data.append(row)
