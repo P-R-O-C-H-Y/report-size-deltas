@@ -348,7 +348,10 @@ class ReportSizeDeltas:
         # > This equals a limit of 65,536 4-byte unicode characters.
         maximum_report_length = 262144
 
-        cell_key_list = ["success","warning","error"]
+        if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
+            cell_key_list = ["prev_success","prev_warning","prev_error","success","warning","error"]
+        else:
+            cell_key_list = ["success","warning","error"]
 
         ok_emoji = ":white_check_mark:"
         warning_emoji = ":warning:"
@@ -396,12 +399,11 @@ class ReportSizeDeltas:
                     # for PR print before - after changes results
                     if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
-                            cell_value = fail_emoji
+                            cell_value['prev_error'] = int(cell_value['prev_error']) + 1
                         elif sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute] != 0:
-                            cell_value = warning_emoji + " " + str(sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute])
+                            cell_value['prev_warning'] = int(cell_value['prev_warning']) + 1
                         else:
-                            cell_value = ok_emoji
-                        cell_value += " -> "
+                            cell_value['prev_success'] = int(cell_value['prev_success']) + 1
 
                     if sketch[self.ReportKeys.compilation_success][self.ReportKeys.current][self.ReportKeys.absolute] is not True:
                         cell_value['error'] = int(cell_value['error']) + 1
@@ -418,14 +420,27 @@ class ReportSizeDeltas:
             for cell in range(1,len(summary_report_data[row])):
                 print(summary_report_data[row][cell])
                 print_result = ""
+
+                if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
+                    if int(summary_report_data[row][cell]['prev_success']) > 0:
+                        print_result += str(summary_report_data[row][cell]['prev_success']) + " " + ok_emoji + " "
+                    if int(summary_report_data[row][cell]['prev_warning']) > 0:
+                        print_result += str(summary_report_data[row][cell]['prev_warning']) + " " + warning_emoji + " "
+                    if int(summary_report_data[row][cell]['prev_error']) > 0:
+                        print_result += str(summary_report_data[row][cell]['prev_error']) + " " + fail_emoji + " "
+                    if print_result != "":
+                        print_result += "/ "
+
                 if int(summary_report_data[row][cell]['success']) > 0:
                     print_result += str(summary_report_data[row][cell]['success']) + " " + ok_emoji + " "
                 if int(summary_report_data[row][cell]['warning']) > 0:
                     print_result += str(summary_report_data[row][cell]['warning']) + " " + warning_emoji + " "
                 if int(summary_report_data[row][cell]['error']) > 0:
-                    print_result += str(summary_report_data[row][cell]['error']) + " " + fail_emoji
+                    print_result += str(summary_report_data[row][cell]['error']) + " " + fail_emoji + " "
+
                 if print_result == "":
                     print_result = "N/A"
+
                 summary_report_data[row][cell] = print_result
 
         # Add comment heading
