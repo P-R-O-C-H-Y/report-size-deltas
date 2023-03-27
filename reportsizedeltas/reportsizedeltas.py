@@ -386,15 +386,16 @@ class ReportSizeDeltas:
                         # Add a row to the report
                         #row = [ "N/A" for i in boards]
                         row = [library_name]
-                        row.extend([0] * (board_count))
+                        row.extend([dict(zip(cell_key_list, [0]*len(cell_key_list)))] * (board_count))
                         #row.append("N/A")
                         #row[0] = library_name
                         summary_report_data.append(row)
                         row_number = len(summary_report_data) - 1
-                        cell_value = dict(zip(cell_key_list, [0]*len(cell_key_list)))
+                        #cell_value = dict(zip(cell_key_list, [0]*len(cell_key_list)))
                     else:
                         row_number = position
-                        cell_value = summary_report_data[row_number][column_number]
+                        #cell_value = summary_report_data[row_number][column_number]
+                    cell_value = summary_report_data[row_number][column_number]    
                     # for PR print before - after changes results
                     if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
