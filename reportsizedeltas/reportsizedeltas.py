@@ -385,9 +385,10 @@ class ReportSizeDeltas:
                     if position == 0:
                         # Add a row to the report
                         #row = [ "N/A" for i in boards]
-                        row = [0] * (board_count + 1)
+                        row = [library_name]
+                        row.extend([0] * (board_count))
                         #row.append("N/A")
-                        row[0] = library_name
+                        #row[0] = library_name
                         summary_report_data.append(row)
                         row_number = len(summary_report_data) - 1
                         cell_value = dict(zip(cell_key_list, [0]*len(cell_key_list)))
