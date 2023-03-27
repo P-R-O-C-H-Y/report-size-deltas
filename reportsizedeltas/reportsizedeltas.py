@@ -403,8 +403,6 @@ class ReportSizeDeltas:
                             cell_value = ok_emoji
                         cell_value += " -> "
 
-                    print(cell_value)
-
                     if sketch[self.ReportKeys.compilation_success][self.ReportKeys.current][self.ReportKeys.absolute] is not True:
                         cell_value['error'] = int(cell_value['error']) + 1
                     elif sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute] != 0:
@@ -412,21 +410,22 @@ class ReportSizeDeltas:
                     else:
                         cell_value['success'] = int(cell_value['success']) + 1
 
-                    print(cell_value)
                     summary_report_data[row_number][column_number] = cell_value
 
         # Process summary report data with emojis
+
         for row in range(len(summary_report_data)):
             for cell in range(len(summary_report_data[row])):
                 if cell != 0:
-                    cell_value = summary_report_data[row][cell]
+                    #cell_value = summary_report_data[row][cell]
+                    print(summary_report_data[row][cell])
                     print_result = ""
-                    if int(cell_value['success']) > 0:
-                        print_result += str(cell_value['success']) + " " + ok_emoji + " "
-                    if int(cell_value['warning']) > 0:
-                        print_result += str(cell_value['warning']) + " " + warning_emoji + " "
-                    if int(cell_value['error']) > 0:
-                        print_result += str(cell_value['error']) + " " + fail_emoji
+                    if int(summary_report_data[row][cell]['success']) > 0:
+                        print_result += str(summary_report_data[row][cell]['success']) + " " + ok_emoji + " "
+                    if int(summary_report_data[row][cell]['warning']) > 0:
+                        print_result += str(summary_report_data[row][cell]['warning']) + " " + warning_emoji + " "
+                    if int(summary_report_data[row][cell]['error']) > 0:
+                        print_result += str(summary_report_data[row][cell]['error']) + " " + fail_emoji
                     if print_result == "":
                         print_result = "N/A"
                     summary_report_data[row][cell] = print_result
