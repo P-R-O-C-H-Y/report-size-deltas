@@ -404,6 +404,9 @@ class ReportSizeDeltas:
                             cell_value = ok_emoji
                         cell_value += " -> "
 
+                    print(cell_value)
+                    print(vars(cell_value))
+                    
                     if sketch[self.ReportKeys.compilation_success][self.ReportKeys.current][self.ReportKeys.absolute] is not True:
                         cell_value['error'] = cell_value['error'] + 1
                     elif sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute] != 0:
@@ -416,8 +419,8 @@ class ReportSizeDeltas:
         # Process summary report data with emojis
         for row in range(len(summary_report_data)):
             for cell in range(len(summary_report_data[row])):
-                if cell is not 0:
-                    if summary_report_data[row][cell] is not "N/A":
+                if cell != 0:
+                    if summary_report_data[row][cell] != "N/A":
                         cell_value = summary_report_data[row][cell]
                         print_result = ""
                         if cell_value['success'] > 0:
