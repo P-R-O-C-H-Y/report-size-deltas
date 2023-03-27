@@ -414,7 +414,7 @@ class ReportSizeDeltas:
 
         # Process summary report data with emojis
 
-        for row in range(len(summary_report_data)):
+        for row in range(len(summary_report_data[1:])):
             for cell in range(len(summary_report_data[row])):
                 if cell != 0:
                     #cell_value = summary_report_data[row][cell]
