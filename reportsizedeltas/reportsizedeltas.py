@@ -79,7 +79,16 @@ class ReportSizeDeltas:
         minimum = "minimum"
         maximum = "maximum"
         sketches = "sketches"
+        library = "library"
+        target = "target"
         compilation_success = "compilation_success"
+
+    class CellKeys:
+        """Key names used in the cell for each library/target"""
+        succcess = "success"
+        warning = "warning"
+        error = "error"
+
 
     def __init__(self, repository_name, sketches_reports_source, token):
         self.repository_name = repository_name
@@ -339,6 +348,11 @@ class ReportSizeDeltas:
         # > This equals a limit of 65,536 4-byte unicode characters.
         maximum_report_length = 262144
 
+        cell_key_list = ["success","warning","error"]
+        """Key names used in the cell for each library/target"""
+        succcess = "success"
+        warning = "warning"
+        error = "error"
         ok_emoji = ":white_check_mark:"
         warning_emoji = ":warning:"
         fail_emoji = ":x:"
@@ -356,15 +370,13 @@ class ReportSizeDeltas:
 
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
-                board_name = boards[self.ReportKeys.board].split(":")
-                summary_report_data[0].append(board_name[2].upper())
+                summary_report_data[0].append(boards[self.ReportKeys.target].upper())
                 column_number += 1
 
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
-                    cell_value = ""
-                    path = splitall(sketch[self.ReportKeys.name])
-                    library_name = path[5]
+                    cell_value = {}
+                    library_name = sketch[self.ReportKeys.library]
                     # Determine row number for library
                     position = get_report_row_number(
                         report=summary_report_data,
@@ -378,8 +390,10 @@ class ReportSizeDeltas:
                         row[0] = library_name
                         summary_report_data.append(row)
                         row_number = len(summary_report_data) - 1
+                        cell_value = dict(zip(cell_key_list, [None]*len(cell_key_list)))
                     else:
                         row_number = position
+                        cell_value = summary_report_data[row_number][column_number]
                     # for PR print before - after changes results
                     if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
@@ -391,13 +405,28 @@ class ReportSizeDeltas:
                         cell_value += " -> "
 
                     if sketch[self.ReportKeys.compilation_success][self.ReportKeys.current][self.ReportKeys.absolute] is not True:
-                        cell_value += fail_emoji
+                        cell_value['error'] = cell_value['error'] + 1
                     elif sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute] != 0:
-                        cell_value += warning_emoji + " " + str(sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute])
+                        cell_value['warning'] = cell_value['warning'] + 1
                     else:
-                        cell_value += ok_emoji
+                        cell_value['success'] = cell_value['success'] + 1
 
                     summary_report_data[row_number][column_number] = cell_value
+
+        # Process summary report data with emojis
+        for row in range(len(summary_report_data)):
+            for cell in range(len(summary_report_data[row])):
+                if cell is not 0:
+                    if summary_report_data[row][cell] is not "N/A":
+                        cell_value = summary_report_data[row][cell]
+                        print_result = ""
+                        if cell_value['success'] > 0:
+                            print_result += str(cell_value['success']) + " " + ok_emoji + " "
+                        if cell_value['warning'] > 0:
+                            print_result += str(cell_value['warning']) + " " + warning_emoji + " "
+                        if cell_value['error'] > 0:
+                            print_result += str(cell_value['error']) + " " + fail_emoji
+                        summary_report_data[row][cell] = print_result
 
         # Add comment heading
         report_markdown = "### " + self.report_key_beginning + "\n\n"
