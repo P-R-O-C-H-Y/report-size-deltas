@@ -429,7 +429,7 @@ class ReportSizeDeltas:
                     if int(summary_report_data[row][cell]['prev_error']) > 0:
                         print_result += str(summary_report_data[row][cell]['prev_error']) + " " + fail_emoji + " "
                     if print_result != "":
-                        print_result += "/ "
+                        print_result += "-> "
 
                 if int(summary_report_data[row][cell]['success']) > 0:
                     print_result += str(summary_report_data[row][cell]['success']) + " " + ok_emoji + " "
