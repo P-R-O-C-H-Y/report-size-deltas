@@ -424,11 +424,11 @@ class ReportSizeDeltas:
                 if cell != 0:
                     cell_value = summary_report_data[row][cell]
                     print_result = ""
-                    if cell_value['success'] > 0:
+                    if int(cell_value['success']) > 0:
                         print_result += str(cell_value['success']) + " " + ok_emoji + " "
-                    if cell_value['warning'] > 0:
+                    if int(cell_value['warning']) > 0:
                         print_result += str(cell_value['warning']) + " " + warning_emoji + " "
-                    if cell_value['error'] > 0:
+                    if int(cell_value['error']) > 0:
                         print_result += str(cell_value['error']) + " " + fail_emoji
                     if print_result == "":
                         print_result = "N/A"
