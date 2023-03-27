@@ -414,21 +414,24 @@ class ReportSizeDeltas:
 
         # Process summary report data with emojis
 
-        for row in range(len(summary_report_data[1:])):
-            for cell in range(len(summary_report_data[row])):
-                if cell != 0:
-                    #cell_value = summary_report_data[row][cell]
-                    print(summary_report_data[row][cell])
-                    print_result = ""
-                    if int(summary_report_data[row][cell]['success']) > 0:
-                        print_result += str(summary_report_data[row][cell]['success']) + " " + ok_emoji + " "
-                    if int(summary_report_data[row][cell]['warning']) > 0:
-                        print_result += str(summary_report_data[row][cell]['warning']) + " " + warning_emoji + " "
-                    if int(summary_report_data[row][cell]['error']) > 0:
-                        print_result += str(summary_report_data[row][cell]['error']) + " " + fail_emoji
-                    if print_result == "":
-                        print_result = "N/A"
-                    summary_report_data[row][cell] = print_result
+        for row in range(len(summary_report_data)):
+            if row != 0:
+                for cell in range(len(summary_report_data[row])):
+                    if cell != 0:
+                        #cell_value = summary_report_data[row][cell]
+                        
+                        #print(summary_report_data[row+1][cell+1])
+                        print(summary_report_data[row][cell])
+                        print_result = ""
+                        if int(summary_report_data[row][cell]['success']) > 0:
+                            print_result += str(summary_report_data[row][cell]['success']) + " " + ok_emoji + " "
+                        if int(summary_report_data[row][cell]['warning']) > 0:
+                            print_result += str(summary_report_data[row][cell]['warning']) + " " + warning_emoji + " "
+                        if int(summary_report_data[row][cell]['error']) > 0:
+                            print_result += str(summary_report_data[row][cell]['error']) + " " + fail_emoji
+                        if print_result == "":
+                            print_result = "N/A"
+                        summary_report_data[row][cell] = print_result
 
         # Add comment heading
         report_markdown = "### " + self.report_key_beginning + "\n\n"
