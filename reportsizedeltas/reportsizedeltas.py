@@ -405,15 +405,15 @@ class ReportSizeDeltas:
                         cell_value += " -> "
 
                     print(cell_value)
-                    print(vars(cell_value))
-                    
-                    if sketch[self.ReportKeys.compilation_success][self.ReportKeys.current][self.ReportKeys.absolute] is not True:
-                        cell_value['error'] = cell_value['error'] + 1
-                    elif sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute] != 0:
-                        cell_value['warning'] = cell_value['warning'] + 1
-                    else:
-                        cell_value['success'] = cell_value['success'] + 1
 
+                    if sketch[self.ReportKeys.compilation_success][self.ReportKeys.current][self.ReportKeys.absolute] is not True:
+                        cell_value['error'] = int(cell_value['error']) + 1
+                    elif sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute] != 0:
+                        cell_value['warning'] = int(cell_value['warning']) + 1
+                    else:
+                        cell_value['success'] = int(cell_value['success']) + 1
+
+                    print(cell_value)
                     summary_report_data[row_number][column_number] = cell_value
 
         # Process summary report data with emojis
