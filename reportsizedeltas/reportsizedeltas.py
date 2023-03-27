@@ -385,7 +385,7 @@ class ReportSizeDeltas:
                     if position == 0:
                         # Add a row to the report
                         #row = [ "N/A" for i in boards]
-                        row = ["N/A"] * (board_count + 1)
+                        row = [0] * (board_count + 1)
                         #row.append("N/A")
                         row[0] = library_name
                         summary_report_data.append(row)
@@ -420,16 +420,17 @@ class ReportSizeDeltas:
         for row in range(len(summary_report_data)):
             for cell in range(len(summary_report_data[row])):
                 if cell != 0:
-                    if summary_report_data[row][cell] != "N/A":
-                        cell_value = summary_report_data[row][cell]
-                        print_result = ""
-                        if cell_value['success'] > 0:
-                            print_result += str(cell_value['success']) + " " + ok_emoji + " "
-                        if cell_value['warning'] > 0:
-                            print_result += str(cell_value['warning']) + " " + warning_emoji + " "
-                        if cell_value['error'] > 0:
-                            print_result += str(cell_value['error']) + " " + fail_emoji
-                        summary_report_data[row][cell] = print_result
+                    cell_value = summary_report_data[row][cell]
+                    print_result = ""
+                    if cell_value['success'] > 0:
+                        print_result += str(cell_value['success']) + " " + ok_emoji + " "
+                    if cell_value['warning'] > 0:
+                        print_result += str(cell_value['warning']) + " " + warning_emoji + " "
+                    if cell_value['error'] > 0:
+                        print_result += str(cell_value['error']) + " " + fail_emoji
+                    if print_result == "":
+                        print_result = "N/A"
+                    summary_report_data[row][cell] = print_result
 
         # Add comment heading
         report_markdown = "### " + self.report_key_beginning + "\n\n"
