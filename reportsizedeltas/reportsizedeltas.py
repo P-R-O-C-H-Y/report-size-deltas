@@ -415,7 +415,6 @@ class ReportSizeDeltas:
                     summary_report_data[row_number][column_number] = cell_value
 
         # Process summary report data with emojis
-
         for row in range(1,len(summary_report_data)):
             for cell in range(1,len(summary_report_data[row])):
                 print(summary_report_data[row][cell])
@@ -437,7 +436,6 @@ class ReportSizeDeltas:
                     print_result += str(summary_report_data[row][cell]['warning']) + " " + warning_emoji + " "
                 if int(summary_report_data[row][cell]['error']) > 0:
                     print_result += str(summary_report_data[row][cell]['error']) + " " + fail_emoji + " "
-
                 if print_result == "":
                     print_result = "N/A"
 
