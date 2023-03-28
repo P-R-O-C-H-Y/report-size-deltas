@@ -417,9 +417,8 @@ class ReportSizeDeltas:
         # Process summary report data with emojis
         for row in range(1,len(summary_report_data)):
             for cell in range(1,len(summary_report_data[row])):
-                print(summary_report_data[row][cell])
                 print_result = ""
-
+                
                 if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
                     if int(summary_report_data[row][cell]['prev_success']) > 0:
                         print_result += str(summary_report_data[row][cell]['prev_success']) + " " + ok_emoji + " "
