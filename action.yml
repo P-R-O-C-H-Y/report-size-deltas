@@ -7,6 +7,9 @@ inputs:
   github-token:
     description: 'GitHub access token used to comment the memory usage comparison results to the PR thread'
     default: ${{ github.token }}
+  pr-number:
+    description: 'GitHub PR number where the report size deltas is supposed to be run from'
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'

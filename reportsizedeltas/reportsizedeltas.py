@@ -102,8 +102,8 @@ class ReportSizeDeltas:
             self.report_size_deltas_from_local_reports()
 
         # Workaround for Pull request from forks.
-        if os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
-            self.report_size_deltas_from_local_reports()
+        #if os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
+        #    self.report_size_deltas_from_local_reports()
 
         elif os.environ["GITHUB_EVENT_NAME"] == "schedule":
             self.report_size_deltas_from_local_reports_on_schedule()
@@ -152,6 +152,53 @@ class ReportSizeDeltas:
     def report_size_deltas_from_workflow_artifacts(self):
         """Scan the repository's pull requests and comment memory usage change reports where appropriate."""
         # Get the repository's pull requests
+        input_pr_number = token=os.environ["INPUT_PR-NUMBER"]
+        if input_pr_number:
+            api_data = self.api_request(request="repos/" + self.repository_name + "/pulls/" + input_pr_number)
+            pr_data = api_data["json_data"]
+        
+            # Note: closed PRs are not listed in the API response
+            pr_number = pr_data["number"]
+            pr_head_sha = pr_data["head"]["sha"]
+            print("::debug::Processing pull request number:", pr_number)
+            # When a PR is locked, only collaborators may comment. The automatically generated GITHUB_TOKEN will
+            # likely be used, which is owned by the github-actions bot, who doesn't have collaborator status. So
+            # locking the thread would cause the job to fail.
+            if pr_data["locked"]:
+                print("::debug::PR locked, skipping")
+                return
+
+            if self.report_exists(pr_number=pr_number,
+                                    pr_head_sha=pr_head_sha):
+                # Go on to the next PR
+                print("::debug::Report already exists")
+                return
+
+            artifact_download_url = self.get_artifact_download_url_for_sha(
+                pr_user_login=pr_data["user"]["login"],
+                pr_head_ref=pr_data["head"]["ref"],
+                pr_head_sha=pr_head_sha)
+            if artifact_download_url is None:
+                # Go on to the next PR
+                print("::debug::No sketches report artifact found")
+                return
+
+            artifact_folder_object = self.get_artifact(artifact_download_url=artifact_download_url)
+
+            sketches_reports = self.get_sketches_reports(artifact_folder_object=artifact_folder_object)
+
+            if sketches_reports:
+                if sketches_reports[0][self.ReportKeys.commit_hash] != pr_head_sha:
+                    # The deltas report key uses the hash from the report, but the report_exists() comparison is
+                    # done using the hash provided by the API. If for some reason the two didn't match, it would
+                    # result in the deltas report being done over and over again.
+                    print("::warning::Report commit hash doesn't match PR's head commit hash, skipping")
+                    return
+
+                report = self.generate_report(sketches_reports=sketches_reports)
+
+                self.comment_report(pr_number=pr_number, report_markdown=report)
+
         logger.debug("Getting PRs for " + self.repository_name)
         page_number = 1
         page_count = 1
