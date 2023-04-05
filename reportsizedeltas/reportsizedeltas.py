@@ -97,6 +97,7 @@ class ReportSizeDeltas:
 
     def report_size_deltas(self):
         """Comment a report of memory usage change to pull request(s)."""
+        print(os.environ["GITHUB_EVENT_NAME"])
         if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
             # The sketches reports will be in a local folder location specified by the user
             self.report_size_deltas_from_local_reports()
