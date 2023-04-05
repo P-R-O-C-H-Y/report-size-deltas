@@ -548,8 +548,15 @@ class ReportSizeDeltas:
 
         logger.info("Opening URL: " + url)
 
+        # Get the owner of the forked repository
+        pr_url = os.environ['GITHUB_EVENT_PATH']
+        with open(pr_url) as f:
+            pr_data = json.load(f)
+            owner = pr_data['pull_request']['head']['repo']['owner']['login']
+
         # GitHub recommends using user name as User-Agent (https://developer.github.com/v3/#user-agent-required)
-        headers = {"Authorization": "token " + self.token, "User-Agent": self.repository_name.split("/")[0]}
+        #headers = {"Authorization": "token " + self.token, "User-Agent": self.repository_name.split("/")[0]}
+        headers = {"Authorization": "token " + os.environ[f"{owner.upper()}_TOKEN"], "User-Agent": self.repository_name.split("/")[0]}
         request = urllib.request.Request(url=url, headers=headers, data=data)
 
         retry_count = 0
