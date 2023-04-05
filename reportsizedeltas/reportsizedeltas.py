@@ -97,14 +97,20 @@ class ReportSizeDeltas:
 
     def report_size_deltas(self):
         """Comment a report of memory usage change to pull request(s)."""
-        print(os.environ["GITHUB_EVENT_NAME"])
         if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
             # The sketches reports will be in a local folder location specified by the user
             self.report_size_deltas_from_local_reports()
+
+        # Workaround for Pull request from forks.
+        if os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
+            self.report_size_deltas_from_local_reports()
+
         elif os.environ["GITHUB_EVENT_NAME"] == "schedule":
             self.report_size_deltas_from_local_reports_on_schedule()
+
         elif os.environ["GITHUB_EVENT_NAME"] == "push":
             self.report_size_deltas_from_local_reports_on_schedule()
+
         else:
             # The script is being run from a workflow triggered by something other than a PR
             # Scan the repository's pull requests and comment memory usage change reports where appropriate.
