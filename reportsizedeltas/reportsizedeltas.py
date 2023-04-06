@@ -152,9 +152,9 @@ class ReportSizeDeltas:
     def report_size_deltas_from_workflow_artifacts(self):
         """Scan the repository's pull requests and comment memory usage change reports where appropriate."""
         # Get the repository's pull requests
-        input_pr_number = token=os.environ["INPUT_PR-NUMBER"]
+        input_pr_number =os.environ["INPUT_PR-NUMBER"]
         print(input_pr_number)
-        
+
         if input_pr_number:
             api_data = self.api_request(request="repos/" + self.repository_name + "/pulls/" + input_pr_number)
             pr_data = api_data["json_data"]
