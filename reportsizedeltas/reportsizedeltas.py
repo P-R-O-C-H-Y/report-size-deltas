@@ -103,7 +103,7 @@ class ReportSizeDeltas:
 
         # Workaround for Pull request from forks.
         if os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
-            self.report_size_deltas_from_local_reports()
+            self.report_size_deltas_from_local_reports_on_workflow_run()
 
         elif os.environ["GITHUB_EVENT_NAME"] == "schedule":
             self.report_size_deltas_from_local_reports_on_schedule()
@@ -125,6 +125,19 @@ class ReportSizeDeltas:
             report = self.generate_report(sketches_reports=sketches_reports)
 
             with open(file=os.environ["GITHUB_EVENT_PATH"]) as github_event_file:
+                pr_number = json.load(github_event_file)["pull_request"]["number"]
+
+            self.comment_report(pr_number=pr_number, report_markdown=report)
+
+    def report_size_deltas_from_local_reports_on_workflow_run(self):
+        """Comment a report of memory usage change to the pull request."""
+        sketches_reports_folder = pathlib.Path(os.environ["GITHUB_WORKSPACE"], self.sketches_reports_source)
+        sketches_reports = self.get_sketches_reports(artifact_folder_object=sketches_reports_folder)
+
+        if sketches_reports:
+            report = self.generate_report(sketches_reports=sketches_reports)
+
+            with open(file=os.environ["INPUT_PR-EVENT-PATH"]) as github_event_file:
                 pr_number = json.load(github_event_file)["pull_request"]["number"]
 
             self.comment_report(pr_number=pr_number, report_markdown=report)
