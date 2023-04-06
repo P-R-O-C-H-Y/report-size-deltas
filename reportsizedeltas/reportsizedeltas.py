@@ -102,7 +102,7 @@ class ReportSizeDeltas:
             self.report_size_deltas_from_local_reports()
 
         # Workaround for Pull request from forks.
-        if os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
+        elif os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
             self.report_size_deltas_from_local_reports_on_workflow_run()
 
         elif os.environ["GITHUB_EVENT_NAME"] == "schedule":
