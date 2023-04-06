@@ -9,7 +9,7 @@ inputs:
     default: ${{ github.token }}
   pr-number:
     description: 'GitHub PR number where the report size deltas is supposed to be run from'
-    default: ''
+    default: 0
 runs:
   using: 'docker'
   image: 'Dockerfile'
