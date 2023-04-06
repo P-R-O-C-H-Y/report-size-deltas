@@ -369,7 +369,7 @@ class ReportSizeDeltas:
         # > This equals a limit of 65,536 4-byte unicode characters.
         maximum_report_length = 262144
 
-        if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
+        if os.environ["GITHUB_EVENT_NAME"] == "pull_request" or os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
             cell_key_list = ["prev_success","prev_warning","prev_error","success","warning","error"]
         else:
             cell_key_list = ["success","warning","error"]
@@ -418,7 +418,7 @@ class ReportSizeDeltas:
                         #cell_value = summary_report_data[row_number][column_number]
                     cell_value = summary_report_data[row_number][column_number]    
                     # for PR print before - after changes results
-                    if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
+                    if os.environ["GITHUB_EVENT_NAME"] == "pull_request" or os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
                         if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
                             cell_value['prev_error'] = int(cell_value['prev_error']) + 1
                         elif sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute] != 0:
@@ -440,7 +440,7 @@ class ReportSizeDeltas:
             for cell in range(1,len(summary_report_data[row])):
                 print_result = ""
                 
-                if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
+                if os.environ["GITHUB_EVENT_NAME"] == "pull_request" or os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
                     if int(summary_report_data[row][cell]['prev_success']) > 0:
                         print_result += str(summary_report_data[row][cell]['prev_success']) + " " + ok_emoji + " "
                     if int(summary_report_data[row][cell]['prev_warning']) > 0:
