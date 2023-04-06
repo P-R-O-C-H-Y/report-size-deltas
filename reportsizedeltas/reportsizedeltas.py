@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 def main():
-    set_verbosity(enable_verbosity=False)
+    set_verbosity(enable_verbosity=True)
 
     if "INPUT_SIZE-DELTAS-REPORTS-ARTIFACT-NAME" in os.environ:
         print("::warning::The size-deltas-report-artifact-name input is deprecated. Use the equivalent input: "
@@ -170,11 +170,11 @@ class ReportSizeDeltas:
                 print("::debug::PR locked, skipping")
                 return
 
-            if self.report_exists(pr_number=pr_number,
-                                    pr_head_sha=pr_head_sha):
-                # Go on to the next PR
-                print("::debug::Report already exists")
-                return
+            # if self.report_exists(pr_number=pr_number,
+            #                         pr_head_sha=pr_head_sha):
+            #     # Go on to the next PR
+            #     print("::debug::Report already exists")
+            #     return
 
             artifact_download_url = self.get_artifact_download_url_for_sha(
                 pr_user_login=pr_data["user"]["login"],
