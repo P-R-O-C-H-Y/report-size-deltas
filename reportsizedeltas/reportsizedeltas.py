@@ -102,8 +102,8 @@ class ReportSizeDeltas:
             self.report_size_deltas_from_local_reports()
 
         # Workaround for Pull request from forks.
-        #if os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
-        #    self.report_size_deltas_from_local_reports()
+        if os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
+            self.report_size_deltas_from_local_reports()
 
         elif os.environ["GITHUB_EVENT_NAME"] == "schedule":
             self.report_size_deltas_from_local_reports_on_schedule()
@@ -155,7 +155,7 @@ class ReportSizeDeltas:
         input_pr_number = os.environ["INPUT_PR-NUMBER"]
 
         if int(input_pr_number) > 0:
-            print("::debug::Processing comment for single pull request #", input_pr_number)
+            print("Processing comment for single pull request #", input_pr_number)
             api_data = self.api_request(request="repos/" + self.repository_name + "/pulls/" + input_pr_number)
             pr_data = api_data["json_data"]
         
