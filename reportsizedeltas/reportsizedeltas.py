@@ -158,7 +158,7 @@ class ReportSizeDeltas:
             dt_string = now.strftime("%b-%d-%Y %H:%M:%S")
             print("date and time =", dt_string)
 
-            with open(report_destination, "w") as file:
+            with open(report_destination, "w+") as file:
                 file.write(report)
                 file.write("\nGenerated on: " + dt_string + "\n")
 
