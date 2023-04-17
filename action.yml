@@ -10,6 +10,9 @@ inputs:
   pr-event-path:
     description: 'GitHub event path from the PR, where the report size deltas is supposed to run from'
     default: ''
+  destination-file:
+    description: 'Path to file where to save the results, used for PUSH or SCHEDULE events'
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
