@@ -403,7 +403,7 @@ class ReportSizeDeltas:
             summary_report_data[1].extend(["FLASH","RAM"])
 
         # Debug print summary_report_data
-        print("Summary report data:\n" + str(summary_report_data))
+        logger.debug("Summary report data:\n" + str(summary_report_data))
 
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
@@ -437,7 +437,7 @@ class ReportSizeDeltas:
                         #cell_value = summary_report_data[row_number][column_number]
 
                     # Add data to the report for FLASH and RAM, can be changed to absolute or relative
-                    print(sketch[self.ReportKeys.sizes])
+                    logger.debug(sketch[self.ReportKeys.sizes])
 
                     summary_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative]
                     summary_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative]
