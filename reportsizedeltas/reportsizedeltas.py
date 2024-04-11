@@ -437,6 +437,8 @@ class ReportSizeDeltas:
                         #cell_value = summary_report_data[row_number][column_number]
 
                     # Add data to the report for FLASH and RAM, can be changed to absolute or relative
+                    print(sketch[self.ReportKeys.sizes])
+
                     summary_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative]
                     summary_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative]
 
