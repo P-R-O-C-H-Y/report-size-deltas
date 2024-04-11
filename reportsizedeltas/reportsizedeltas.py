@@ -425,7 +425,7 @@ class ReportSizeDeltas:
                         #row = [ "N/A" for i in boards]
                         row = [sketch_name]
                         for i in range(board_count):
-                            row.extend([0,0])
+                            row.extend(["",""])
                         #row.extend(dict(zip(cell_key_list, [0]*len(cell_key_list))) for x in range(board_count))
                         #row.append("N/A")
                         #row[0] = library_name
