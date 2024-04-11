@@ -709,7 +709,7 @@ def generate_html_table(row_list):
     html_table = "<table>\n"
     # Generate heading row
     #html_table = html_table + "<tr>" + "".join(["<th>" + str(cell) + "</th>" for cell in row_list[0]]) + "</tr>\n"
-    html_table = html_table + "<tr>" + "".join(["<th colspan="2" align="center">" + str(cell) + "</th>" if index != 0 else "<th>" + str(cell) + "</th>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
+    html_table = html_table + "<tr>" + "".join(["<th colspan='2' align='center'>" + str(cell) + "</th>" if index != 0 else "<th>" + str(cell) + "</th>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
 
     # Add data rows
     for row in row_list[1:]:
