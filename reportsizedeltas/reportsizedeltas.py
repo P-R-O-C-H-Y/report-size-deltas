@@ -388,7 +388,11 @@ class ReportSizeDeltas:
         first_row_heading = "Target"
         second_row_heading = "Example"
 
-        summary_report_data = [[first_row_heading],[second_row_heading]]
+        # Create the summary report data with the first row of headings
+        summary_report_data = [[first_row_heading,  "FLASH [bytes]", "FLASH [%]", "RAM [bytes]", "RAM [%]"]]
+
+        # Create detailed report data
+        detailed_report_data = [[first_row_heading],[second_row_heading]]
 
         row_number = 0
         column_number = 1
@@ -400,14 +404,14 @@ class ReportSizeDeltas:
 
         # Add the FLASH and RAM to the second row
         for i in range(board_count):
-            summary_report_data[1].extend(["FLASH","RAM"])
+            detailed_report_data[1].extend(["FLASH","RAM"])
 
         # Debug print summary_report_data
-        logger.debug("Summary report data:\n" + str(summary_report_data))
+        logger.debug("Summary report data:\n" + str(detailed_report_data))
 
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
-                summary_report_data[0].append(boards[self.ReportKeys.target].upper())
+                detailed_report_data[0].append(boards[self.ReportKeys.target].upper())
 
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
@@ -415,9 +419,15 @@ class ReportSizeDeltas:
                     sketch_name = sketch[self.ReportKeys.name]
                     # Remove the "libraries/" prefix from the sketch name
                     sketch_name = sketch_name.replace("libraries/", "")
+
+                    #TODO: Add to list only if delta is not 0
+                    if sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative] == 0 or sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative] == 0:
+                        # Skipping
+                        continue
+                    
                     # Determine row number for sketch
                     position = get_report_row_number(
-                        report=summary_report_data,
+                        report=detailed_report_data,
                         row_heading=sketch_name
                     )
                     if position == 0:
@@ -429,8 +439,8 @@ class ReportSizeDeltas:
                         #row.extend(dict(zip(cell_key_list, [0]*len(cell_key_list))) for x in range(board_count))
                         #row.append("N/A")
                         #row[0] = library_name
-                        summary_report_data.append(row)
-                        row_number = len(summary_report_data) - 1
+                        detailed_report_data.append(row)
+                        row_number = len(detailed_report_data) - 1
                         #cell_value = dict(zip(cell_key_list, [0]*len(cell_key_list)))
                     else:
                         row_number = position
@@ -439,45 +449,55 @@ class ReportSizeDeltas:
                     # Add data to the report for FLASH and RAM, can be changed to absolute or relative
                     logger.debug(sketch[self.ReportKeys.sizes])
 
-                    summary_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative]
-                    summary_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative]
+                    detailed_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative]
+                    detailed_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative]
 
+                # Add data to the summary report
+                summary_report_data.append([boards[self.ReportKeys.target].upper(),
+                                            get_summary_value(self, True, boards[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.absolute][self.ReportKeys.minimum], 
+                                                                boards[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.absolute][self.ReportKeys.maximum]),
+                                            get_summary_value(self, True, boards[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.minimum],
+                                                                boards[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.maximum]),
+                                            get_summary_value(self, True, boards[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.absolute][self.ReportKeys.minimum],
+                                                                boards[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.absolute][self.ReportKeys.maximum]),
+                                            get_summary_value(self, True, boards[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.minimum],
+                                                                boards[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.maximum])])
                 column_number += 2
 
+        emoji_decreased = ":green_hearth:"
+        emoji_increased = ":small_red_triangle:"
 
         # Process summary report data with emojis
-        for row in range(2,len(summary_report_data)):
-            for cell in range(1,len(summary_report_data[row])):
+        for row in range(2,len(detailed_report_data)):
+            for cell in range(1,len(detailed_report_data[row])):
                 print_result = ""
 
-               # if str(summary_report_data[row][cell]) != "":
-               #     if int(summary_report_data[row][cell]) > 0:
-               #         print_result = r"$\color{red}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
-               #     if int(summary_report_data[row][cell]) < 0:
-               #         print_result = r"$\color{green}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
-               #     if int(summary_report_data[row][cell]) == 0:
-               #         print_result = r"$\color{rgba(255,255,255, 0.6)}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
-               # else:
-               #     print_result = r"$\color{rgba(255,255,255, 0.4)}{\textsf{-}}$"
-
-                if str(summary_report_data[row][cell]) != "":
-                    if int(summary_report_data[row][cell]) > 0:
-                        print_result = r"$\color{red}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
-                    if int(summary_report_data[row][cell]) < 0:
-                        print_result = r"$\color{green}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
-                    if int(summary_report_data[row][cell]) == 0:
-                        print_result = str(summary_report_data[row][cell])
+                if str(detailed_report_data[row][cell]) != "":
+                    if int(detailed_report_data[row][cell]) > 0:
+                        print_result = emoji_increased + r" + " + str(detailed_report_data[row][cell])
+                    if int(detailed_report_data[row][cell]) < 0:
+                        print_result = emoji_decreased + str(detailed_report_data[row][cell])
+                    if int(detailed_report_data[row][cell]) == 0:
+                        print_result = str(detailed_report_data[row][cell])
                 else:
                     print_result = "-"
 
-                summary_report_data[row][cell] = print_result
+                detailed_report_data[row][cell] = print_result
 
         # Add comment heading
         report_markdown = "### " + self.report_key_beginning + "\n\n"
 
         # Add summary table
-        report_markdown = report_markdown + generate_html_table(row_list=summary_report_data) + "\n"
+        report_markdown = report_markdown + generate_summary_html_table(row_list=summary_report_data) + "\n"
 
+        # Add markdown detail to hide the table
+        report_markdown = report_markdown + "<details>\n<summary>Click to expand the detailed deltas report</summary>\n\n"
+
+        # Add detailed table
+        report_markdown = report_markdown + generate_detailed_html_table(row_list=detailed_report_data) + "\n"
+
+        # Add markdown detail to hide the table
+        report_markdown = report_markdown + "</details>\n"
         print("Report:\n" + report_markdown)
         return report_markdown
 
@@ -713,7 +733,7 @@ def generate_markdown_table(row_list):
 
     return markdown_table
 
-def generate_html_table(row_list):
+def generate_detailed_html_table(row_list):
     """Return the data formatted as a Markdown table
 
     Keyword arguments:
@@ -728,6 +748,28 @@ def generate_html_table(row_list):
     # Add data rows
     for row in row_list[1:]:
         html_table = html_table + "<tr>" + "".join(["<td>" + str(cell) + "</td>" for cell in row]) + "</tr>\n"
+
+    html_table = html_table + "</table>\n"
+
+    return html_table
+
+def generate_summary_html_table(row_list):
+    """Return the data formatted as a Markdown table
+
+    Keyword arguments:
+    row_list -- list containing the data
+    """
+
+    html_table = "<table>\n"
+    # Generate heading row
+    html_table = html_table + "<tr>" + "".join(["<th>" + str(cell) + "</th>" for cell in row_list[0]]) + "</tr>\n"
+    #html_table = html_table + "<tr>" + "".join(["<th colspan='2' align='center'>" + str(cell) + "</th>" if index != 0 else "<th>" + str(cell) + "</th>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
+
+    align='right'
+    # Add data rows
+    for row in row_list[1:]:
+        #html_table = html_table + "<tr>" + "".join(["<td>" + str(cell) + "</td>" for cell in row]) + "</tr>\n"
+        html_table = html_table + "<tr>" + "".join(["<td align='right'>" + str(cell) + "</td>" if index != 0 else "<td>" + str(cell) + "</td>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
 
     html_table = html_table + "</table>\n"
 
@@ -760,6 +802,45 @@ def splitall(path):
             path = parts[0]
             allparts.insert(0, parts[1])
     return allparts
+
+def get_summary_value(self, show_emoji: bool, minimum, maximum) -> str:
+    """Return the Markdown formatted text for a memory change data cell in the report table.
+
+    Keyword arguments:
+    show_emoji -- whether to add the emoji change indicator
+    minimum -- minimum amount of change for this memory type
+    maximum -- maximum amount of change for this memory type
+    """
+    size_decrease_emoji = ":green_heart:"
+    size_ambiguous_emoji = ":grey_question:"
+    size_increase_emoji = ":small_red_triangle:"
+
+    value = None
+    if minimum == self.not_applicable_indicator:
+        value = self.not_applicable_indicator
+        emoji = None
+    elif minimum < 0 and maximum <= 0:
+        emoji = size_decrease_emoji
+    elif minimum == 0 and maximum == 0:
+        emoji = None
+    elif minimum >= 0 and maximum > 0:
+        emoji = size_increase_emoji
+    else:
+        emoji = size_ambiguous_emoji
+
+    if value is None:
+        # Prepend + to positive values to improve readability
+        if minimum > 0:
+            minimum = "+" + str(minimum)
+        if maximum > 0:
+            maximum = "+" + str(maximum)
+
+        value = str(minimum) + " - " + str(maximum)
+
+    if show_emoji and (emoji is not None):
+        value = emoji + " " + value
+
+    return value
 
 # Only execute the following code if the script is run directly, not imported
 if __name__ == "__main__":
