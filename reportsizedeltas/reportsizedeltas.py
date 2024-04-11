@@ -472,7 +472,7 @@ class ReportSizeDeltas:
 
                 if str(detailed_report_data[row][cell]) != "":
                     if int(detailed_report_data[row][cell]) > 0:
-                        print_result = emoji_increased + r" + " + str(detailed_report_data[row][cell])
+                        print_result = emoji_increased + "+" + str(detailed_report_data[row][cell])
                     if int(detailed_report_data[row][cell]) < 0:
                         print_result = emoji_decreased + str(detailed_report_data[row][cell])
                     if int(detailed_report_data[row][cell]) == 0:
@@ -484,6 +484,9 @@ class ReportSizeDeltas:
 
         # Add comment heading
         report_markdown = "### " + self.report_key_beginning + "\n\n"
+
+        # Add info on what is in table 
+        report_markdown = report_markdown + "The table below shows the memory usage change (min - max) in bytes and percentage for each sketch and target.\n\n"
 
         # Add summary table
         report_markdown = report_markdown + generate_summary_html_table(row_list=summary_report_data) + "\n"
