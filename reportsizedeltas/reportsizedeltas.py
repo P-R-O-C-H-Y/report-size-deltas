@@ -449,14 +449,14 @@ class ReportSizeDeltas:
         for row in range(2,len(summary_report_data)):
             for cell in range(1,len(summary_report_data[row])):
                 print_result = ""
-                
-                if int(summary_report_data[row][cell]) > 0:
-                    print_result = r"$\color{red}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
-                if int(summary_report_data[row][cell]) < 0:
-                    print_result = r"$\color{green}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
-                if int(summary_report_data[row][cell]) == 0:
-                    print_result = r"$\color{white}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
-                if print_result == "":
+                if str(summary_report_data[row][cell]) != "":
+                    if int(summary_report_data[row][cell]) > 0:
+                        print_result = r"$\color{red}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
+                    if int(summary_report_data[row][cell]) < 0:
+                        print_result = r"$\color{green}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
+                    if int(summary_report_data[row][cell]) == 0:
+                        print_result = r"$\color{white}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
+                else:
                     print_result = r"$\color{white}{\textsf{-}}$"
 
                 summary_report_data[row][cell] = print_result
