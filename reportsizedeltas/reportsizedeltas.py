@@ -369,6 +369,13 @@ class ReportSizeDeltas:
         # > This equals a limit of 65,536 4-byte unicode characters.
         maximum_report_length = 262144
 
+        # The report will be generated as a table
+        # The table will have the following columns:
+
+        # Targets  |   Target1   |   Target2   |   Target3   | ... so in final its |  Targets   | Target1 | Target1 | Target2 | Target2 | Target3 | Target3 | ...
+        # Sketch   | FLASH | RAM | FLASH | RAM | FLASH | RAM | ...
+        # Example1 |   1   |  2  |   3   |  4  |   5   |  6  | ...
+
         if os.environ["GITHUB_EVENT_NAME"] == "pull_request" or os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
             cell_key_list = ["prev_success","prev_warning","prev_error","success","warning","error"]
         else:
@@ -378,9 +385,11 @@ class ReportSizeDeltas:
         warning_emoji = ":warning:"
         fail_emoji = ":x:"
 
-        fqbn_column_heading = "Library"
+        first_row_heading = "Target"
+        second_row_heading = "Example"
 
-        summary_report_data = [[fqbn_column_heading]]
+        summary_report_data = [[first_row_heading],[second_row_heading]]
+
         row_number = 0
         column_number = 0
 
@@ -388,6 +397,13 @@ class ReportSizeDeltas:
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
                 board_count += 1
+
+        # Add the FLASH and RAM to the second row
+        for i in range(board_count):
+            summary_report_data[1].extend(["FLASH","RAM"])
+
+        # Debug print summary_report_data
+        print("Summary report data:\n" + str(summary_report_data))
 
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
@@ -397,16 +413,18 @@ class ReportSizeDeltas:
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
                     cell_value = {}
-                    library_name = sketch[self.ReportKeys.library]
-                    # Determine row number for library
+                    sketch_name = sketch[self.ReportKeys.name]
+                    # Remove the "libraries/" prefix from the sketch name
+                    sketch_name = sketch_name.replace("libraries/", "")
+                    # Determine row number for sketch
                     position = get_report_row_number(
                         report=summary_report_data,
-                        row_heading=library_name
+                        row_heading=sketch_name
                     )
                     if position == 0:
                         # Add a row to the report
                         #row = [ "N/A" for i in boards]
-                        row = [library_name]
+                        row = [sketch_name]
                         row.extend(dict(zip(cell_key_list, [0]*len(cell_key_list))) for x in range(board_count))
                         #row.append("N/A")
                         #row[0] = library_name
