@@ -449,15 +449,26 @@ class ReportSizeDeltas:
         for row in range(2,len(summary_report_data)):
             for cell in range(1,len(summary_report_data[row])):
                 print_result = ""
+
+               # if str(summary_report_data[row][cell]) != "":
+               #     if int(summary_report_data[row][cell]) > 0:
+               #         print_result = r"$\color{red}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
+               #     if int(summary_report_data[row][cell]) < 0:
+               #         print_result = r"$\color{green}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
+               #     if int(summary_report_data[row][cell]) == 0:
+               #         print_result = r"$\color{rgba(255,255,255, 0.6)}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
+               # else:
+               #     print_result = r"$\color{rgba(255,255,255, 0.4)}{\textsf{-}}$"
+
                 if str(summary_report_data[row][cell]) != "":
                     if int(summary_report_data[row][cell]) > 0:
                         print_result = r"$\color{red}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
                     if int(summary_report_data[row][cell]) < 0:
                         print_result = r"$\color{green}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
                     if int(summary_report_data[row][cell]) == 0:
-                        print_result = r"$\color{rgba(255,255,255, 0.6)}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
+                        print_result = r"$\color{grey}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
                 else:
-                    print_result = r"$\color{rgba(255,255,255, 0.4)}{\textsf{-}}$"
+                    print_result = r"$\color{grey)}{\textsf{-}}$"
 
                 summary_report_data[row][cell] = print_result
 
