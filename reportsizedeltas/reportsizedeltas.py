@@ -465,6 +465,8 @@ class ReportSizeDeltas:
                                                                 boards[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.maximum])])
                 column_number += 2
 
+        logger.debug("Summary report data:\n" + str(summary_report_data))
+
         emoji_decreased = ":green_hearth:"
         emoji_increased = ":small_red_triangle:"
 
