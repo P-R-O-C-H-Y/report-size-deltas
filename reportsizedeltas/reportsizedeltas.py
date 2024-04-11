@@ -420,11 +420,6 @@ class ReportSizeDeltas:
                     sketch_name = sketch[self.ReportKeys.name]
                     # Remove the "libraries/" prefix from the sketch name
                     sketch_name = sketch_name.replace("libraries/", "")
-
-                    #TODO: Add to list only if delta is not 0
-                    #if sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative] == 0 or sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative] == 0:
-                    #    # Skipping
-                    #    continue
                     
                     # Determine row number for sketch
                     position = get_report_row_number(
@@ -450,8 +445,8 @@ class ReportSizeDeltas:
                     # Add data to the report for FLASH and RAM, can be changed to absolute or relative
                     logger.debug(sketch[self.ReportKeys.sizes])
 
-                    detailed_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative]
-                    detailed_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative]
+                    detailed_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.absolute]
+                    detailed_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.absolute]
 
                 # Add data to the summary report
                 summary_report_data.append([boards[self.ReportKeys.target].upper(),
@@ -494,7 +489,7 @@ class ReportSizeDeltas:
         report_markdown = report_markdown + generate_summary_html_table(row_list=summary_report_data) + "\n"
 
         # Add markdown detail to hide the table
-        report_markdown = report_markdown + "<details>\n<summary>Click to expand the detailed deltas report</summary>\n\n"
+        report_markdown = report_markdown + "<details>\n<summary>Click to expand the detailed deltas report [usage change in BYTES]</summary>\n\n"
 
         # Add detailed table
         report_markdown = report_markdown + generate_detailed_html_table(row_list=detailed_report_data) + "\n"
