@@ -455,9 +455,9 @@ class ReportSizeDeltas:
                     if int(summary_report_data[row][cell]) < 0:
                         print_result = r"$\color{green}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
                     if int(summary_report_data[row][cell]) == 0:
-                        print_result = r"$\color{white}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
+                        print_result = r"$\color{rgba(255,255,255, 0.6)}{\textsf{" + str(summary_report_data[row][cell]) + r"}}$"
                 else:
-                    print_result = r"$\color{white}{\textsf{-}}$"
+                    print_result = r"$\color{rgba(255,255,255, 0.4)}{\textsf{-}}$"
 
                 summary_report_data[row][cell] = print_result
 
