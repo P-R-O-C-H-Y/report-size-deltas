@@ -442,7 +442,8 @@ class ReportSizeDeltas:
                     summary_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative]
                     summary_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative]
 
-                    column_number += 2
+                column_number += 2
+
 
         # Process summary report data with emojis
         for row in range(2,len(summary_report_data)):
