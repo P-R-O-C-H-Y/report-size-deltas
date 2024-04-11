@@ -342,15 +342,13 @@ class ReportSizeDeltas:
         with artifact_folder_object as artifact_folder:
             # artifact_folder will be a string when running in non-local report mode
             artifact_folder = pathlib.Path(artifact_folder)
-            print("artifact_folder: ",artifact_folder)
             sketches_reports = []
             for report_filename in sorted(artifact_folder.iterdir()):
                 # Combine sketches reports into an array
-                print("report_filename: ",report_filename)
+                print("Opening report_filename: ",report_filename)
                 with open(file=report_filename.joinpath(report_filename)) as report_file:
                     report_data = json.load(report_file)
                     json_str = json.dumps(report_data, indent=4)
-                    print(json_str)
                     for fqbn_data in report_data[self.ReportKeys.boards]:
                         #if self.ReportKeys.sizes in fqbn_data:
                             # The report contains deltas data
