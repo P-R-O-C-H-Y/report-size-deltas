@@ -407,8 +407,8 @@ class ReportSizeDeltas:
         for i in range(board_count):
             detailed_report_data[1].extend(["FLASH","RAM"])
 
-        # Debug print summary_report_data
-        logger.debug("Summary report data:\n" + str(detailed_report_data))
+        # Debug print detailed report data
+        logger.debug("Detailed report data:\n" + str(detailed_report_data))
 
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
@@ -422,9 +422,9 @@ class ReportSizeDeltas:
                     sketch_name = sketch_name.replace("libraries/", "")
 
                     #TODO: Add to list only if delta is not 0
-                    if sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative] == 0 or sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative] == 0:
-                        # Skipping
-                        continue
+                    #if sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative] == 0 or sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative] == 0:
+                    #    # Skipping
+                    #    continue
                     
                     # Determine row number for sketch
                     position = get_report_row_number(
@@ -769,8 +769,9 @@ def generate_summary_html_table(row_list):
     align='right'
     # Add data rows
     for row in row_list[1:]:
-        #html_table = html_table + "<tr>" + "".join(["<td>" + str(cell) + "</td>" for cell in row]) + "</tr>\n"
-        html_table = html_table + "<tr>" + "".join(["<td align='right'>" + str(cell) + "</td>" if index != 0 else "<td>" + str(cell) + "</td>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
+        html_table = html_table + "<tr>" + "".join(["<td>" + str(cell) + "</td>" for cell in row]) + "</tr>\n"
+
+        html_table = html_table + "<tr>" + "".join(["<td align='right'>" + str(cell) + "</td>" if index != 0 else "<td>" + str(cell) + "</td>" for index, cell in enumerate(row)]) + "</tr>\n"
 
     html_table = html_table + "</table>\n"
 
