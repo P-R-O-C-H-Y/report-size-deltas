@@ -60,7 +60,7 @@ class ReportSizeDeltas:
     artifact_name -- name of the workflow artifact that contains the memory usage data
     token -- GitHub access token
     """
-    report_key_beginning = "Sizes comparsion test"
+    report_key_beginning = "Memory usage test (comparing PR agains master branch)"
     not_applicable_indicator = "N/A"
 
     class ReportKeys:
@@ -486,7 +486,7 @@ class ReportSizeDeltas:
         report_markdown = "### " + self.report_key_beginning + "\n\n"
 
         # Add info on what is in table 
-        report_markdown = report_markdown + "The table below shows the memory usage change (min - max) in bytes and percentage for each sketch and target.\n\n"
+        report_markdown = report_markdown + "The table below shows the summary of memory usage change (min - max) in bytes and percentage for each target.\n\n"
 
         # Add summary table
         report_markdown = report_markdown + generate_summary_html_table(row_list=summary_report_data) + "\n"
