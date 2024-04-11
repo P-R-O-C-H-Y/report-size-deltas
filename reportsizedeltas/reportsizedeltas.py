@@ -61,6 +61,7 @@ class ReportSizeDeltas:
     token -- GitHub access token
     """
     report_key_beginning = "Sizes comparsion test"
+    not_applicable_indicator = "N/A"
 
     class ReportKeys:
         """Key names used in the sketches report dictionary"""
