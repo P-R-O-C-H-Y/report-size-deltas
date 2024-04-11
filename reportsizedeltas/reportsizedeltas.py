@@ -60,7 +60,7 @@ class ReportSizeDeltas:
     artifact_name -- name of the workflow artifact that contains the memory usage data
     token -- GitHub access token
     """
-    report_key_beginning = "External libraries build test"
+    report_key_beginning = "Sizes comparsion test"
 
     class ReportKeys:
         """Key names used in the sketches report dictionary"""
@@ -391,7 +391,7 @@ class ReportSizeDeltas:
         summary_report_data = [[first_row_heading],[second_row_heading]]
 
         row_number = 0
-        column_number = 0
+        column_number = 1
 
         board_count = 0
         for fqbns_data in sketches_reports:
@@ -408,7 +408,6 @@ class ReportSizeDeltas:
         for fqbns_data in sketches_reports:
             for boards in fqbns_data[self.ReportKeys.boards]:
                 summary_report_data[0].append(boards[self.ReportKeys.target].upper())
-                column_number += 1
 
                 # Populate the row with data
                 for sketch in boards[self.ReportKeys.sketches]:
@@ -425,7 +424,9 @@ class ReportSizeDeltas:
                         # Add a row to the report
                         #row = [ "N/A" for i in boards]
                         row = [sketch_name]
-                        row.extend(dict(zip(cell_key_list, [0]*len(cell_key_list))) for x in range(board_count))
+                        for i in range(board_count):
+                            row.extend([0,0])
+                        #row.extend(dict(zip(cell_key_list, [0]*len(cell_key_list))) for x in range(board_count))
                         #row.append("N/A")
                         #row[0] = library_name
                         summary_report_data.append(row)
@@ -434,48 +435,26 @@ class ReportSizeDeltas:
                     else:
                         row_number = position
                         #cell_value = summary_report_data[row_number][column_number]
-                    cell_value = summary_report_data[row_number][column_number]    
-                    # for PR print before - after changes results
-                    if os.environ["GITHUB_EVENT_NAME"] == "pull_request" or os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
-                        if sketch[self.ReportKeys.compilation_success][self.ReportKeys.previous][self.ReportKeys.absolute] is not True:
-                            cell_value['prev_error'] = int(cell_value['prev_error']) + 1
-                        elif sketch[self.ReportKeys.warnings][self.ReportKeys.previous][self.ReportKeys.absolute] != 0:
-                            cell_value['prev_warning'] = int(cell_value['prev_warning']) + 1
-                        else:
-                            cell_value['prev_success'] = int(cell_value['prev_success']) + 1
 
-                    if sketch[self.ReportKeys.compilation_success][self.ReportKeys.current][self.ReportKeys.absolute] is not True:
-                        cell_value['error'] = int(cell_value['error']) + 1
-                    elif sketch[self.ReportKeys.warnings][self.ReportKeys.current][self.ReportKeys.absolute] != 0:
-                        cell_value['warning'] = int(cell_value['warning']) + 1
-                    else:
-                        cell_value['success'] = int(cell_value['success']) + 1
+                    # Add data to the report for FLASH and RAM, can be changed to absolute or relative
+                    summary_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative]
+                    summary_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative]
 
-                    summary_report_data[row_number][column_number] = cell_value
+                    column_number += 2
 
         # Process summary report data with emojis
-        for row in range(1,len(summary_report_data)):
+        for row in range(2,len(summary_report_data)):
             for cell in range(1,len(summary_report_data[row])):
                 print_result = ""
                 
-                if os.environ["GITHUB_EVENT_NAME"] == "pull_request" or os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
-                    if int(summary_report_data[row][cell]['prev_success']) > 0:
-                        print_result += str(summary_report_data[row][cell]['prev_success']) + " " + ok_emoji + " "
-                    if int(summary_report_data[row][cell]['prev_warning']) > 0:
-                        print_result += str(summary_report_data[row][cell]['prev_warning']) + " " + warning_emoji + " "
-                    if int(summary_report_data[row][cell]['prev_error']) > 0:
-                        print_result += str(summary_report_data[row][cell]['prev_error']) + " " + fail_emoji + " "
-                    if print_result != "":
-                        print_result += "-> "
-
-                if int(summary_report_data[row][cell]['success']) > 0:
-                    print_result += str(summary_report_data[row][cell]['success']) + " " + ok_emoji + " "
-                if int(summary_report_data[row][cell]['warning']) > 0:
-                    print_result += str(summary_report_data[row][cell]['warning']) + " " + warning_emoji + " "
-                if int(summary_report_data[row][cell]['error']) > 0:
-                    print_result += str(summary_report_data[row][cell]['error']) + " " + fail_emoji + " "
+                if int(summary_report_data[row][cell]) > 0:
+                    print_result = "$\color{red}{\textsf{" + str(summary_report_data[row][cell]) + "}}$"
+                if int(summary_report_data[row][cell]) < 0:
+                    print_result = "$\color{green}{\textsf{" + str(summary_report_data[row][cell]) + "}}$"
+                if int(summary_report_data[row][cell]) == 0:
+                    print_result = "$\color{white}{\textsf{" + str(summary_report_data[row][cell]) + "}}$"
                 if print_result == "":
-                    print_result = "N/A"
+                    print_result = "$\color{white}{\textsf{-}}$"
 
                 summary_report_data[row][cell] = print_result
 
@@ -483,9 +462,9 @@ class ReportSizeDeltas:
         report_markdown = "### " + self.report_key_beginning + "\n\n"
 
         # Add summary table
-        report_markdown = report_markdown + generate_markdown_table(row_list=summary_report_data) + "\n"
+        report_markdown = report_markdown + generate_html_table(row_list=summary_report_data) + "\n"
 
-        logger.debug("Report:\n" + report_markdown)
+        print("Report:\n" + report_markdown)
         return report_markdown
 
     def comment_report(self, pr_number, report_markdown):
@@ -720,6 +699,25 @@ def generate_markdown_table(row_list):
 
     return markdown_table
 
+def generate_html_table(row_list):
+    """Return the data formatted as a Markdown table
+
+    Keyword arguments:
+    row_list -- list containing the data
+    """
+
+    html_table = "<table>\n"
+    # Generate heading row
+    #html_table = html_table + "<tr>" + "".join(["<th>" + str(cell) + "</th>" for cell in row_list[0]]) + "</tr>\n"
+    html_table = html_table + "<tr>" + "".join(["<th colspan="2" align="center">" + str(cell) + "</th>" if index != 0 else "<th>" + str(cell) + "</th>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
+
+    # Add data rows
+    for row in row_list[1:]:
+        html_table = html_table + "<tr>" + "".join(["<td>" + str(cell) + "</td>" for cell in row]) + "</tr>\n"
+
+    html_table = html_table + "</table>\n"
+
+    return html_table
 
 def generate_csv_table(row_list):
     """Return a string containing the supplied data formatted as CSV.
