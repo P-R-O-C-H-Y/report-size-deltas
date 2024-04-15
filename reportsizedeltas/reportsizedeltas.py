@@ -354,9 +354,10 @@ class ReportSizeDeltas:
                 with open(file=report_filename.joinpath(report_filename)) as report_file:
                     report_data = json.load(report_file)
 
-                    for fqbn_data in report_data[self.ReportKeys.boards]:
+                    for fqbn_data in report_data[self.ReportKeys.board]:
                         #if self.ReportKeys.sizes in fqbn_data:
                             # The report contains deltas data
+
                             sketches_reports.append(fqbn_data)
                             break
 
