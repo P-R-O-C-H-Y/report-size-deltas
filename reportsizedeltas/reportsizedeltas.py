@@ -357,7 +357,7 @@ class ReportSizeDeltas:
                     for fqbn_data in report_data[self.ReportKeys.boards]:
                         #if self.ReportKeys.sizes in fqbn_data:
                             # The report contains deltas data
-                            sketches_reports.append(report_data)
+                            sketches_reports.append(fqbn_data)
                             break
 
         if not sketches_reports:
@@ -387,7 +387,7 @@ class ReportSizeDeltas:
         print("::debug::Generating deltas report")
         print("::debug::Sketches reports: " + str(sketches_reports))
         print("::debug::Master sketches reports: " + str(master_sketches_reports))
-        
+
         first_row_heading = "Target"
         second_row_heading = "Example"
 
