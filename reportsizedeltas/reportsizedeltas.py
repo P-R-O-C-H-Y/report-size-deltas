@@ -356,10 +356,9 @@ class ReportSizeDeltas:
                     print("::debug::Report data: " + str(report_data))
                     for fqbn_data in report_data[self.ReportKeys.boards]:
                         #if self.ReportKeys.sizes in fqbn_data:
-                            # The report contains deltas data
-                            print("::debug::Sketches report data: " + str(fqbn_data))
-                            sketches_reports.append(fqbn_data)
-                            break
+                        # The report contains deltas data
+                        print("::debug::Sketches report data: " + str(fqbn_data))
+                        sketches_reports.append(fqbn_data)
 
         if not sketches_reports:
             print("No size deltas data found in workflow artifact for this PR. The compile-examples action's "
