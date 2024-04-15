@@ -384,6 +384,10 @@ class ReportSizeDeltas:
         # Sketch   | FLASH | RAM | FLASH | RAM | FLASH | RAM | ...
         # Example1 |   1   |  2  |   3   |  4  |   5   |  6  | ...
 
+        print("::debug::Generating deltas report")
+        print("::debug::Sketches reports: " + str(sketches_reports))
+        print("::debug::Master sketches reports: " + str(master_sketches_reports))
+        
         first_row_heading = "Target"
         second_row_heading = "Example"
 
