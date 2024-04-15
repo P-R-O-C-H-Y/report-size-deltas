@@ -132,16 +132,21 @@ class ReportSizeDeltas:
 
     def report_size_deltas_from_local_reports_on_workflow_run(self):
         """Comment a report of memory usage change to the pull request."""
-        sketches_reports_folder = pathlib.Path(os.environ["GITHUB_WORKSPACE"], self.sketches_reports_source)
+        sketches_reports_folder = pathlib.Path(os.environ["GITHUB_WORKSPACE"], self.sketches_reports_source+"/pr")
         sketches_reports = self.get_sketches_reports(artifact_folder_object=sketches_reports_folder)
 
+        # Read master branch sketches reports
+        master_sketches_reports_folder = pathlib.Path(os.environ["GITHUB_WORKSPACE"], self.sketches_reports_source+"/master")
+        master_sketches_reports = self.get_sketches_reports(artifact_folder_object=master_sketches_reports_folder)
+
         if sketches_reports:
-            report = self.generate_report(sketches_reports=sketches_reports)
+            report = self.generate_report(sketches_reports=sketches_reports, master_sketches_reports=master_sketches_reports)
 
             with open(file=os.environ["INPUT_PR-EVENT-PATH"]) as github_event_file:
                 pr_number = json.load(github_event_file)["pull_request"]["number"]
 
             self.comment_report(pr_number=pr_number, report_markdown=report)
+
 
     def report_size_deltas_from_local_reports_on_schedule(self):
         """Comment a report of memory usage change to the file ."""
@@ -342,7 +347,9 @@ class ReportSizeDeltas:
             # artifact_folder will be a string when running in non-local report mode
             artifact_folder = pathlib.Path(artifact_folder)
             sketches_reports = []
+            print("::debug::Artifact folder: " + str(artifact_folder))
             for report_filename in sorted(artifact_folder.iterdir()):
+                print("::debug::Report filename: " + str(report_filename))
                 # Combine sketches reports into an array
                 with open(file=report_filename.joinpath(report_filename)) as report_file:
                     report_data = json.load(report_file)
@@ -359,7 +366,7 @@ class ReportSizeDeltas:
 
         return sketches_reports
 
-    def generate_report(self, sketches_reports):
+    def generate_report(self, sketches_reports, master_sketches_reports=None):
         """Return the Markdown for the deltas report comment.
 
         Keyword arguments:
@@ -376,15 +383,6 @@ class ReportSizeDeltas:
         # Targets  |   Target1   |   Target2   |   Target3   | ... so in final its |  Targets   | Target1 | Target1 | Target2 | Target2 | Target3 | Target3 | ...
         # Sketch   | FLASH | RAM | FLASH | RAM | FLASH | RAM | ...
         # Example1 |   1   |  2  |   3   |  4  |   5   |  6  | ...
-
-        if os.environ["GITHUB_EVENT_NAME"] == "pull_request" or os.environ["GITHUB_EVENT_NAME"] == "workflow_run":
-            cell_key_list = ["prev_success","prev_warning","prev_error","success","warning","error"]
-        else:
-            cell_key_list = ["success","warning","error"]
-
-        ok_emoji = ":white_check_mark:"
-        warning_emoji = ":warning:"
-        fail_emoji = ":x:"
 
         first_row_heading = "Target"
         second_row_heading = "Example"
