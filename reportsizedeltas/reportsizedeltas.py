@@ -369,14 +369,15 @@ class ReportSizeDeltas:
 
         for item in sketches_reports:
             board = item[self.ReportKeys.board]
+            target = item[self.ReportKeys.target]
             sketches = item[self.ReportKeys.sketches]
             
             if board not in consolidated_boards:
-                consolidated_boards[board] = sketches
+                consolidated_boards[board] = {self.ReportKeys.target: target, self.ReportKeys.sketches: sketches}
             else:
-                consolidated_boards[board].extend(sketches)
+                consolidated_boards[board][self.ReportKeys.sketches].extend(sketches)
 
-        consolidated_list = [{self.ReportKeys.board: board, self.ReportKeys.sketches: sketches} for board, sketches in consolidated_boards.items()]
+        consolidated_list = [{self.ReportKeys.board: board, self.ReportKeys.target: data[self.ReportKeys.target], self.ReportKeys.sketches: data[self.ReportKeys.sketches]} for board, data in consolidated_boards.items()]
         print("::debug::Consolidated sketches reports: " + str(consolidated_list))
 
         #return sketches_reports
