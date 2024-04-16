@@ -387,7 +387,7 @@ class ReportSizeDeltas:
                 consolidated_boards[board][self.ReportKeys.sketches].extend(sketches)
 
         consolidated_list = [{self.ReportKeys.board: board, self.ReportKeys.target: data[self.ReportKeys.target], self.ReportKeys.sketches: data[self.ReportKeys.sketches]} for board, data in consolidated_boards.items()]
-        print("::debug::Consolidated sketches reports: " + str(consolidated_list))
+        #print("::debug::Consolidated sketches reports: " + str(consolidated_list))
 
         #return sketches_reports
         return consolidated_list
@@ -482,8 +482,8 @@ class ReportSizeDeltas:
                     #cell_value = summary_report_data[row_number][column_number]
 
                 # Add data to the report for FLASH and RAM, can be changed to absolute or relative
-                logger.debug(sketch[self.ReportKeys.sizes])
-                
+                print("::debug::Sketch sizes: " + str(sketch[self.ReportKeys.sizes]))
+
                 #Find the master sketch data for the same sketch and board
                 master_sketch = None
                 if master_sketches_reports:
@@ -497,10 +497,10 @@ class ReportSizeDeltas:
                 print("::debug::Master sketch: " + str(master_sketch))
                 #Calculate the deltas, master sketch is the main sketch for comparison
                 if master_sketch:
-                    flash_delta_bytes = sketch[self.ReportKeys.flash_bytes] - master_sketch[self.ReportKeys.flash_bytes]
-                    flash_delta_percentage = sketch[self.ReportKeys.flash_percentage] - master_sketch[self.ReportKeys.flash_percentage]
-                    ram_delta_bytes = sketch[self.ReportKeys.ram_bytes] - master_sketch[self.ReportKeys.ram_bytes]
-                    ram_delta_percentage = sketch[self.ReportKeys.ram_percentage] - master_sketch[self.ReportKeys.ram_percentage]
+                    flash_delta_bytes = sketch[self.ReportKeys.sizes][self.ReportKeys.flash_bytes] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.flash_bytes]
+                    flash_delta_percentage = sketch[self.ReportKeys.sizes][self.ReportKeys.flash_percentage] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.flash_percentage]
+                    ram_delta_bytes = sketch[self.ReportKeys.sizes][self.ReportKeys.ram_bytes] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.ram_bytes]
+                    ram_delta_percentage = sketch[self.ReportKeys.sizes][self.ReportKeys.ram_percentage] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.ram_percentage]
 
                     if flash_delta_bytes > flash_b_max:
                         flash_b_max = flash_delta_bytes
