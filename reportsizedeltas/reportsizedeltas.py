@@ -353,7 +353,7 @@ class ReportSizeDeltas:
             artifact_folder = pathlib.Path(artifact_folder)
             sketches_reports = []
             print("::debug::Artifact folder: " + str(artifact_folder))
-            for report_filename in sorted(artifact_folder.iterdir(), key=numerical_sort):
+            for report_filename in sorted(artifact_folder.iterdir(), key=lambda x: numerical_sort(x.name)):
                 print("::debug::Report filename: " + str(report_filename))
                 # Combine sketches reports into an array
                 with open(file=report_filename.joinpath(report_filename)) as report_file:
