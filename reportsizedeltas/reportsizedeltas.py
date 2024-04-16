@@ -88,6 +88,10 @@ class ReportSizeDeltas:
         library = "library"
         target = "target"
         compilation_success = "compilation_success"
+        flash_bytes = "flash_bytes"
+        flash_percentage = "flash_percentage"
+        ram_bytes = "ram_bytes"
+        ram_percentage = "ram_percentage"
 
     class CellKeys:
         """Key names used in the cell for each library/target"""
@@ -407,8 +411,8 @@ class ReportSizeDeltas:
         # Example1 |   1   |  2  |   3   |  4  |   5   |  6  | ...
 
         print("::debug::Generating deltas report")
-        print("::debug::Sketches reports: " + str(sketches_reports))
-        print("::debug::Master sketches reports: " + str(master_sketches_reports))
+        #print("::debug::Sketches reports: " + str(sketches_reports))
+        #print("::debug::Master sketches reports: " + str(master_sketches_reports))
 
         first_row_heading = "Target"
         second_row_heading = "Example"
@@ -424,8 +428,10 @@ class ReportSizeDeltas:
 
         board_count = 0
         for fqbns_data in sketches_reports:
-            for boards in fqbns_data[self.ReportKeys.boards]:
-                board_count += 1
+            #for boards in fqbns_data[self.ReportKeys.boards]:
+            board_count += 1
+
+        print("::debug::Board count: " + str(board_count))
 
         # Add the FLASH and RAM to the second row
         for i in range(board_count):
@@ -434,55 +440,101 @@ class ReportSizeDeltas:
         # Debug print detailed report data
         logger.debug("Detailed report data:\n" + str(detailed_report_data))
 
-        for fqbns_data in sketches_reports:
-            for boards in fqbns_data[self.ReportKeys.boards]:
-                detailed_report_data[0].append(boards[self.ReportKeys.target].upper())
+        for board in sketches_reports:
+            #for boards in fqbns_data[self.ReportKeys.boards]:
+            detailed_report_data[0].append(board[self.ReportKeys.target].upper())
 
-                # Populate the row with data
-                for sketch in boards[self.ReportKeys.sketches]:
-                    cell_value = {}
-                    sketch_name = sketch[self.ReportKeys.name]
-                    # Remove the "libraries/" prefix from the sketch name
-                    sketch_name = sketch_name.replace("libraries/", "")
-                    
-                    # Determine row number for sketch
-                    position = get_report_row_number(
-                        report=detailed_report_data,
-                        row_heading=sketch_name
-                    )
-                    if position == 0:
-                        # Add a row to the report
-                        #row = [ "N/A" for i in boards]
-                        row = [sketch_name]
-                        for i in range(board_count):
-                            row.extend(["",""])
-                        #row.extend(dict(zip(cell_key_list, [0]*len(cell_key_list))) for x in range(board_count))
-                        #row.append("N/A")
-                        #row[0] = library_name
-                        detailed_report_data.append(row)
-                        row_number = len(detailed_report_data) - 1
-                        #cell_value = dict(zip(cell_key_list, [0]*len(cell_key_list)))
-                    else:
-                        row_number = position
-                        #cell_value = summary_report_data[row_number][column_number]
+            flash_b_max = 0
+            flash_b_min = 0
+            flash_p_max = 0
+            flash_p_min = 0
+            ram_b_max = 0
+            ram_b_min = 0
+            ram_p_max = 0
+            ram_p_min = 0
 
-                    # Add data to the report for FLASH and RAM, can be changed to absolute or relative
-                    logger.debug(sketch[self.ReportKeys.sizes])
+            # Populate the row with data
+            for sketch in board[self.ReportKeys.sketches]:
+                cell_value = {}
+                sketch_name = sketch[self.ReportKeys.name]
+                # Remove the "libraries/" prefix from the sketch name
+                sketch_name = sketch_name.replace("libraries/", "")
+                
+                # Determine row number for sketch
+                position = get_report_row_number(
+                    report=detailed_report_data,
+                    row_heading=sketch_name
+                )
+                if position == 0:
+                    # Add a row to the report
+                    #row = [ "N/A" for i in boards]
+                    row = [sketch_name]
+                    for i in range(board_count):
+                        row.extend(["",""])
+                    #row.extend(dict(zip(cell_key_list, [0]*len(cell_key_list))) for x in range(board_count))
+                    #row.append("N/A")
+                    #row[0] = library_name
+                    detailed_report_data.append(row)
+                    row_number = len(detailed_report_data) - 1
+                    #cell_value = dict(zip(cell_key_list, [0]*len(cell_key_list)))
+                else:
+                    row_number = position
+                    #cell_value = summary_report_data[row_number][column_number]
 
-                    detailed_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.absolute]
-                    detailed_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.absolute]
+                # Add data to the report for FLASH and RAM, can be changed to absolute or relative
+                logger.debug(sketch[self.ReportKeys.sizes])
+                
+                #Find the master sketch data for the same sketch and board
+                master_sketch = None
+                if master_sketches_reports:
+                    for master_board in master_sketches_reports:
+                        if master_board[self.ReportKeys.target] == board[self.ReportKeys.target]:
+                            for master_sketch in master_board[self.ReportKeys.sketches]:
+                                if master_sketch[self.ReportKeys.name] == sketch_name:
+                                    break
+                            break
+                
+                print("::debug::Master sketch: " + str(master_sketch))
+                #Calculate the deltas, master sketch is the main sketch for comparison
+                if master_sketch:
+                    flash_delta_bytes = sketch[self.ReportKeys.flash_bytes] - master_sketch[self.ReportKeys.flash_bytes]
+                    flash_delta_percentage = sketch[self.ReportKeys.flash_percentage] - master_sketch[self.ReportKeys.flash_percentage]
+                    ram_delta_bytes = sketch[self.ReportKeys.ram_bytes] - master_sketch[self.ReportKeys.ram_bytes]
+                    ram_delta_percentage = sketch[self.ReportKeys.ram_percentage] - master_sketch[self.ReportKeys.ram_percentage]
 
-                # Add data to the summary report
-                summary_report_data.append([boards[self.ReportKeys.target].upper(),
-                                            get_summary_value(self, True, boards[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.absolute][self.ReportKeys.minimum], 
-                                                                boards[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.absolute][self.ReportKeys.maximum]),
-                                            get_summary_value(self, True, boards[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.minimum],
-                                                                boards[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.maximum]),
-                                            get_summary_value(self, True, boards[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.absolute][self.ReportKeys.minimum],
-                                                                boards[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.absolute][self.ReportKeys.maximum]),
-                                            get_summary_value(self, True, boards[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.minimum],
-                                                                boards[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.relative][self.ReportKeys.maximum])])
-                column_number += 2
+                    if flash_delta_bytes > flash_b_max:
+                        flash_b_max = flash_delta_bytes
+                    if flash_delta_bytes < flash_b_min:
+                        flash_b_min = flash_delta_bytes
+                    if flash_delta_percentage > flash_p_max:
+                        flash_p_max = flash_delta_percentage
+                    if flash_delta_percentage < flash_p_min:
+                        flash_p_min = flash_delta_percentage
+                    if ram_delta_bytes > ram_b_max:
+                        ram_b_max = ram_delta_bytes
+                    if ram_delta_bytes < ram_b_min:
+                        ram_b_min = ram_delta_bytes
+                    if ram_delta_percentage > ram_p_max:
+                        ram_p_max = ram_delta_percentage
+                    if ram_delta_percentage < ram_p_min:
+                        ram_p_min = ram_delta_percentage
+
+                    detailed_report_data[row_number][column_number] = flash_delta_bytes
+                    detailed_report_data[row_number][column_number+1] = ram_delta_bytes
+                else:
+                    detailed_report_data[row_number][column_number] = ""
+                    detailed_report_data[row_number][column_number+1] = ""
+
+                #detailed_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.absolute]
+                #detailed_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.absolute]
+
+            # Add data to the summary report
+            summary_report_data.append([board[self.ReportKeys.target].upper(),
+                                        get_summary_value(self, True, flash_b_min, flash_b_max),
+                                        get_summary_value(self, True, flash_p_min, flash_p_max),
+                                        get_summary_value(self, True, ram_b_min, ram_b_max),
+                                        get_summary_value(self, True, ram_p_min, ram_p_max)])
+            column_number += 2
 
         logger.debug("Summary report data:\n" + str(summary_report_data))
 
