@@ -13,6 +13,9 @@ inputs:
   destination-file:
     description: 'Path to file where to save the results, used for PUSH or SCHEDULE events'
     default: ''
+  pr-number:
+    description: 'Number of PR where to comment the results'
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'

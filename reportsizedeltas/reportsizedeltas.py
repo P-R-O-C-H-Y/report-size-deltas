@@ -28,7 +28,8 @@ def main():
 
     report_size_deltas = ReportSizeDeltas(repository_name=os.environ["GITHUB_REPOSITORY"],
                                           sketches_reports_source=os.environ["INPUT_SKETCHES-REPORTS-SOURCE"],
-                                          token=os.environ["INPUT_GITHUB-TOKEN"])
+                                          token=os.environ["INPUT_GITHUB-TOKEN"],
+                                          pr_number=os.environ["INPUT_PR-NUMBER"] if "INPUT_PR-NUMBER" in os.environ else None)
 
     report_size_deltas.report_size_deltas()
 
@@ -64,6 +65,7 @@ class ReportSizeDeltas:
     repository_name -- repository owner and name e.g., octocat/Hello-World
     artifact_name -- name of the workflow artifact that contains the memory usage data
     token -- GitHub access token
+    pr_number -- pull request number (optional, default: None)
     """
     report_key_beginning = "Memory usage test (comparing PR agains master branch)"
     not_applicable_indicator = "N/A"
@@ -100,10 +102,11 @@ class ReportSizeDeltas:
         error = "error"
 
 
-    def __init__(self, repository_name, sketches_reports_source, token):
+    def __init__(self, repository_name, sketches_reports_source, token, pr_number=None):
         self.repository_name = repository_name
         self.sketches_reports_source = sketches_reports_source
         self.token = token
+        self.pr_number = pr_number
 
     def report_size_deltas(self):
         """Comment a report of memory usage change to pull request(s)."""
@@ -151,9 +154,10 @@ class ReportSizeDeltas:
         if sketches_reports:
             report = self.generate_report(sketches_reports=sketches_reports, master_sketches_reports=master_sketches_reports)
 
-            with open(file=os.environ["INPUT_PR-EVENT-PATH"]) as github_event_file:
-                pr_number = json.load(github_event_file)["pull_request"]["number"]
-
+            #with open(file=os.environ["INPUT_PR-EVENT-PATH"]) as github_event_file:
+            #    pr_number = json.load(github_event_file)["pull_request"]["number"]
+            pr_number = self.pr_number
+            
             self.comment_report(pr_number=pr_number, report_markdown=report)
 
 
