@@ -497,7 +497,7 @@ class ReportSizeDeltas:
                 print("::debug::Master sketch: " + str(master_sketch))
                 #Calculate the deltas, master sketch is the main sketch for comparison
                 if master_sketch:
-                    flash_delta_bytes = sketch[self.ReportKeys.sizes][self.ReportKeys.flash_bytes] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.flash_bytes]
+                    flash_delta_bytes = int(sketch[self.ReportKeys.sizes][self.ReportKeys.flash_bytes]) - int(master_sketch[self.ReportKeys.sizes][self.ReportKeys.flash_bytes])
                     flash_delta_percentage = sketch[self.ReportKeys.sizes][self.ReportKeys.flash_percentage] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.flash_percentage]
                     ram_delta_bytes = sketch[self.ReportKeys.sizes][self.ReportKeys.ram_bytes] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.ram_bytes]
                     ram_delta_percentage = sketch[self.ReportKeys.sizes][self.ReportKeys.ram_percentage] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.ram_percentage]
