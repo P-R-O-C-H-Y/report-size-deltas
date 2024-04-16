@@ -363,8 +363,24 @@ class ReportSizeDeltas:
         if not sketches_reports:
             print("No size deltas data found in workflow artifact for this PR. The compile-examples action's "
                   "enable-size-deltas-report input must be set to true to produce size deltas data.")
+            return None
+            
+        consolidated_boards = {}
 
-        return sketches_reports
+        for item in sketches_reports:
+            board = item[self.ReportKeys.board]
+            sketches = item[self.ReportKeys.sketches]
+            
+            if board not in consolidated_boards:
+                consolidated_boards[board] = sketches
+            else:
+                consolidated_boards[board].extend(sketches)
+
+        consolidated_list = [{self.ReportKeys.board: board, self.ReportKeys.sketches: sketches} for board, sketches in consolidated_boards.items()]
+        print("::debug::Consolidated sketches reports: " + str(consolidated_list))
+
+        #return sketches_reports
+        return consolidated_list
 
     def generate_report(self, sketches_reports, master_sketches_reports=None):
         """Return the Markdown for the deltas report comment.
