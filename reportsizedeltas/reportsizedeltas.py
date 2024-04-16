@@ -482,22 +482,34 @@ class ReportSizeDeltas:
                     #cell_value = summary_report_data[row_number][column_number]
 
                 # Add data to the report for FLASH and RAM, can be changed to absolute or relative
-                print("::debug::Sketch sizes: " + str(sketch[self.ReportKeys.sizes]))
+                print("::debug::Sketch: " + str(sketch))
 
-                #Find the master sketch data for the same sketch and board
+                #Find the master sketch data for the same sketch and board and save it as a dictionary
                 master_sketch = None
                 if master_sketches_reports:
                     for master_board in master_sketches_reports:
                         if master_board[self.ReportKeys.target] == board[self.ReportKeys.target]:
                             for master_sketch in master_board[self.ReportKeys.sketches]:
-                                if master_sketch[self.ReportKeys.name] == sketch_name:
+                                if master_sketch[self.ReportKeys.name] == sketch[self.ReportKeys.name]:
+                                    master_sketch = master_sketch
                                     break
-                            break
+                            if master_sketch:
+                                break
                 
+                #master_sketch = None
+                #if master_sketches_reports:
+                #    for master_board in master_sketches_reports:
+                #        if master_board[self.ReportKeys.target] == board[self.ReportKeys.target]:
+                #            for master_sketch in master_board[self.ReportKeys.sketches]:
+                #                if master_sketch[self.ReportKeys.name] == sketch_name:
+                #                    break
+                #            break
+
                 print("::debug::Master sketch: " + str(master_sketch))
                 #Calculate the deltas, master sketch is the main sketch for comparison
+                #each skech contains "sizes" key with valus "flash_bytes", "flash_percentage", "ram_bytes", "ram_percentage"
                 if master_sketch:
-                    flash_delta_bytes = int(sketch[self.ReportKeys.sizes][self.ReportKeys.flash_bytes]) - int(master_sketch[self.ReportKeys.sizes][self.ReportKeys.flash_bytes])
+                    flash_delta_bytes = sketch[self.ReportKeys.sizes][self.ReportKeys.flash_bytes] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.flash_bytes]
                     flash_delta_percentage = sketch[self.ReportKeys.sizes][self.ReportKeys.flash_percentage] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.flash_percentage]
                     ram_delta_bytes = sketch[self.ReportKeys.sizes][self.ReportKeys.ram_bytes] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.ram_bytes]
                     ram_delta_percentage = sketch[self.ReportKeys.sizes][self.ReportKeys.ram_percentage] - master_sketch[self.ReportKeys.sizes][self.ReportKeys.ram_percentage]
