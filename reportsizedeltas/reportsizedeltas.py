@@ -554,7 +554,7 @@ class ReportSizeDeltas:
 
         logger.debug("Summary report data:\n" + str(summary_report_data))
 
-        emoji_decreased = ":green_hearth:"
+        emoji_decreased = ":green_heart:"
         emoji_increased = ":small_red_triangle:"
 
         # Process summary report data with emojis
