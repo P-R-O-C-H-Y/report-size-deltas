@@ -129,8 +129,8 @@ class ReportSizeDeltas:
         if sketches_reports:
             report = self.generate_report(sketches_reports=sketches_reports)
 
-            with open(file=os.environ["GITHUB_EVENT_PATH"]) as github_event_file:
-                pr_number = json.load(github_event_file)["pull_request"]["number"]
+            pr_number = self.pr_number
+            print("::debug::PR number: " + str(pr_number))
 
             self.comment_report(pr_number=pr_number, report_markdown=report)
 
@@ -142,10 +142,9 @@ class ReportSizeDeltas:
         if sketches_reports:
             report = self.generate_report(sketches_reports=sketches_reports)
 
-            #with open(file=os.environ["INPUT_PR-EVENT-PATH"]) as github_event_file:
-            #    pr_number = json.load(github_event_file)["pull_request"]["number"]
             pr_number = self.pr_number
-            
+            print("::debug::PR number: " + str(pr_number))
+
             self.comment_report(pr_number=pr_number, report_markdown=report)
 
     def report_size_deltas_from_local_reports_on_schedule(self):

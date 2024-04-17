@@ -7,9 +7,6 @@ inputs:
   github-token:
     description: 'GitHub access token used to comment the memory usage comparison results to the PR thread'
     default: ${{ github.token }}
-  pr-event-path:
-    description: 'GitHub event path from the PR, where the report size deltas is supposed to run from'
-    default: ''
   destination-file:
     description: 'Path to file where to save the results, used for PUSH or SCHEDULE events'
     default: ''
