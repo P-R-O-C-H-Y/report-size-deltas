@@ -143,6 +143,7 @@ class ReportSizeDeltas:
             report = self.generate_report(sketches_reports=sketches_reports)
 
             pr_number = self.pr_number
+            pr_number = re.sub("[^0-9]", "", pr_number)
             print("::debug::PR number: " + str(pr_number))
 
             self.comment_report(pr_number=pr_number, report_markdown=report)
