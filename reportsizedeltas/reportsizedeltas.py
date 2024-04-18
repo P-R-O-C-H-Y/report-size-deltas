@@ -592,11 +592,11 @@ class ReportSizeDeltas:
                 if str(summary_report_data[row][cell]) != "":
                     if cell == 1 or cell == 2 or cell == 5 or cell == 6:
                         if int(summary_report_data[row][cell]) > 0 and int(summary_report_data[row][cell]) < 2048:
-                            print_result = emoji_warning + "+"
+                            print_result = emoji_warning + " +"
                         if int(summary_report_data[row][cell]) > 2047:
-                            print_result = emoji_increased + "+"
+                            print_result = emoji_increased + " +"
                         if int(summary_report_data[row][cell]) < 0:
-                            print_result = emoji_decreased
+                            print_result = emoji_decreased + " "
                         #if summary_report_data[row][cell] is bigger than 2000 or less than -2000, do /1024 and add "KB"
                         if int(summary_report_data[row][cell]) > 2047 or int(summary_report_data[row][cell]) < -2048:
                             print_result += str(round(int(summary_report_data[row][cell])/1024)) + "K"
@@ -604,11 +604,11 @@ class ReportSizeDeltas:
                             print_result += str(summary_report_data[row][cell])
                     else:
                         if float(summary_report_data[row][cell]) > 0:
-                            print_result = emoji_warning + "+"
+                            print_result = emoji_warning + " +"
                         if float(summary_report_data[row][cell]) > 1:
-                            print_result = emoji_increased + "+"
+                            print_result = emoji_increased + " +"
                         if float(summary_report_data[row][cell]) < 0:
-                            print_result = emoji_decreased
+                            print_result = emoji_decreased + " "
                         #add float value to the print result with 2 decimal points
                         print_result += "{:.2f}".format(summary_report_data[row][cell])
                 else:
