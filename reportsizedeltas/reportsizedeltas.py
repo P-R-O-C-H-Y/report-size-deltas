@@ -559,7 +559,7 @@ class ReportSizeDeltas:
         emoji_decreased = ":green_heart:"
         emoji_increased = ":small_red_triangle:"
 
-        # Process summary report data with emojis
+        # Process detailed report data with emojis
         for row in range(2,len(detailed_report_data)):
             for cell in range(1,len(detailed_report_data[row])):
                 print_result = ""
@@ -594,7 +594,7 @@ class ReportSizeDeltas:
                             print_result = emoji_decreased
                         #if summary_report_data[row][cell] is bigger than 2000 or less than -2000, do /1024 and add "KB"
                         if int(summary_report_data[row][cell]) > 2048 or int(summary_report_data[row][cell]) < -2048:
-                            print_result += str(int(summary_report_data[row][cell])/1024) + " K"
+                            print_result += str(round(int(summary_report_data[row][cell])/1024)) + "K"
                         else:
                             print_result += str(summary_report_data[row][cell])
                     else:
