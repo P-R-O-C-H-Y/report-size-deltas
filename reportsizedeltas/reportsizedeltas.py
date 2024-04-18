@@ -601,7 +601,7 @@ class ReportSizeDeltas:
                         if int(summary_report_data[row][cell]) > 2047 or int(summary_report_data[row][cell]) < -2048:
                             print_result += str(round(int(summary_report_data[row][cell])/1024)) + "K"
                         else:
-                            print_result += str(detailed_report_data[row][cell])
+                            print_result += str(summary_report_data[row][cell])
                     else:
                         if float(summary_report_data[row][cell]) > 0:
                             print_result = emoji_warning + "+"
