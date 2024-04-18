@@ -585,16 +585,16 @@ class ReportSizeDeltas:
             for cell in range(1,len(summary_report_data[row])):
                 print_result = ""
 
-                if str(detailed_report_data[row][cell]) != "":
-                    if float(detailed_report_data[row][cell]) > 0:
+                if str(summary_report_data[row][cell]) != "":
+                    if float(summary_report_data[row][cell]) > 0:
                         print_result = emoji_increased + "+"
-                    if float(detailed_report_data[row][cell]) < 0:
+                    if float(summary_report_data[row][cell]) < 0:
                         print_result = emoji_decreased
                     #if detailed_report_data[row][cell] is bigger than 2000 or less than -2000, do /1024 and add "KB"
-                    if float(detailed_report_data[row][cell]) > 2048 or float(detailed_report_data[row][cell]) < -2048:
-                        print_result += str(int(detailed_report_data[row][cell])/1024) + " K"
+                    if float(summary_report_data[row][cell]) > 2048 or float(summary_report_data[row][cell]) < -2048:
+                        print_result += str(int(summary_report_data[row][cell])/1024) + " K"
                     else:
-                        print_result += str(detailed_report_data[row][cell])
+                        print_result += str(summary_report_data[row][cell])
                     
                 else:
                     print_result = "-"
