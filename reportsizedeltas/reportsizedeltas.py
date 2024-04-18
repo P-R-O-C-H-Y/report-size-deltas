@@ -423,7 +423,7 @@ class ReportSizeDeltas:
         second_row_heading = "Example"
 
         # Create the summary report data with the first row of headings
-        summary_report_data = [["Memory",  "FLASH [bytes]", "FLASH [%]", "RAM [bytes]", "RAM [%]"],["Target", "Min", "Max", "Min", "Max", "Min", "Max", "Min", "Max"]]
+        summary_report_data = [["Memory",  "FLASH [bytes]", "FLASH [%]", "RAM [bytes]", "RAM [%]"],["Target", "DEC", "INC", "DEC", "INC", "DEC", "INC", "DEC", "INC"]]
 
         # Create detailed report data
         detailed_report_data = [[first_row_heading],[second_row_heading]]
