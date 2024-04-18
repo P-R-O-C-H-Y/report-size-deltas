@@ -567,11 +567,11 @@ class ReportSizeDeltas:
 
                 if str(detailed_report_data[row][cell]) != "":
                     if int(detailed_report_data[row][cell]) > 0 and int(detailed_report_data[row][cell]) < 2048:
-                        print_result = emoji_warning + "+"
+                        print_result = emoji_warning + " +"
                     if int(detailed_report_data[row][cell]) > 2047:
-                        print_result = emoji_increased + "+"
+                        print_result = emoji_increased + " +"
                     if int(detailed_report_data[row][cell]) < 0:
-                        print_result = emoji_decreased
+                        print_result = emoji_decreased + " "
                     #if detailed_report_data[row][cell] is bigger than 2000 or less than -2000, do /1024 and add "KB"
                     if int(detailed_report_data[row][cell]) > 2048 or int(detailed_report_data[row][cell]) < -2048:
                         print_result += str(round(int(detailed_report_data[row][cell])/1024)) + "K"
