@@ -494,12 +494,10 @@ class ReportSizeDeltas:
                 if master_sketches_reports:
                     for master_board in master_sketches_reports:
                         if master_board[self.ReportKeys.target] == board[self.ReportKeys.target]:
-                            for master_sketch in master_board[self.ReportKeys.sketches]:
-                                if master_sketch[self.ReportKeys.name] == sketch[self.ReportKeys.name]:
-                                    master_sketch = master_sketch
+                            for loop_master_sketch in master_board[self.ReportKeys.sketches]:
+                                if loop_master_sketch[self.ReportKeys.name] == sketch[self.ReportKeys.name]:
+                                    master_sketch = loop_master_sketch
                                     break
-                            if master_sketch:
-                                break
 
                 print("::debug::Master sketch: " + str(master_sketch))
                 #Calculate the deltas, master sketch is the main sketch for comparison
