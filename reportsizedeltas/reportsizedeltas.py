@@ -423,7 +423,7 @@ class ReportSizeDeltas:
         second_row_heading = "Example"
 
         # Create the summary report data with the first row of headings
-        summary_report_data = [[first_row_heading,  "FLASH [bytes]", "FLASH [%]", "RAM [bytes]", "RAM [%]"]]
+        summary_report_data = [["Memory",  "FLASH [bytes]", "FLASH [%]", "RAM [bytes]", "RAM [%]"],["Target", "Min", "Max", "Min", "Max", "Min", "Max", "Min", "Max"]]
 
         # Create detailed report data
         detailed_report_data = [[first_row_heading],[second_row_heading]]
@@ -538,10 +538,15 @@ class ReportSizeDeltas:
 
             # Add data to the summary report
             summary_report_data.append([board[self.ReportKeys.target].upper(),
-                                        get_summary_value(self, True, flash_b_min, flash_b_max),
-                                        get_summary_value(self, True, flash_p_min, flash_p_max),
-                                        get_summary_value(self, True, ram_b_min, ram_b_max),
-                                        get_summary_value(self, True, ram_p_min, ram_p_max)])
+                                        flash_b_min, flash_b_max,
+                                        flash_p_min, flash_p_max,
+                                        ram_b_min, ram_b_max,
+                                        ram_p_min, ram_p_max])
+            
+                                        #get_summary_value(self, True, flash_b_min, flash_b_max),
+                                        #get_summary_value(self, True, flash_p_min, flash_p_max),
+                                        #get_summary_value(self, True, ram_b_min, ram_b_max),
+                                        #get_summary_value(self, True, ram_p_min, ram_p_max)])
             column_number += 2
 
         logger.debug("Summary report data:\n" + str(summary_report_data))
@@ -566,6 +571,23 @@ class ReportSizeDeltas:
 
                 detailed_report_data[row][cell] = print_result
 
+        # Process summary report data with emojis
+        for row in range(2,len(summary_report_data)):
+            for cell in range(1,len(summary_report_data[row])):
+                print_result = ""
+
+                if str(summary_report_data[row][cell]) != "":
+                    if int(summary_report_data[row][cell]) > 0:
+                        print_result = emoji_increased + "+" + str(summary_report_data[row][cell])
+                    if int(summary_report_data[row][cell]) < 0:
+                        print_result = emoji_decreased + str(summary_report_data[row][cell])
+                    if int(summary_report_data[row][cell]) == 0:
+                        print_result = str(summary_report_data[row][cell])
+                else:
+                    print_result = "-"
+
+                summary_report_data[row][cell] = print_result
+        
         # Add comment heading
         report_markdown = "### " + self.report_key_beginning + "\n\n"
 
@@ -845,14 +867,43 @@ def generate_summary_html_table(row_list):
     row_list -- list containing the data
     """
 
+    #example of the table
+    #<tr>
+    #    <th>Memory</th><th colspan='2' align='center'>FLASH [bytes]</th>
+    #    <th colspan='2' align='center'>FLASH [%]</th>
+    #    <th colspan='2' align='center'>RAM [bytes]</th>
+    #    <th colspan='2' align='center'>RAM [%]</th></tr>
+    #<tr>
+    #    <th>Target</th>
+    #    <th align='center'>min</th>
+    #    <th align='center'>max</th>
+    #    <th align='center'>min</th>
+    #    <th align='center'>max</th>
+    #    <th align='center'>min</th>
+    #    <th align='center'>max</th>
+    #    <th align='center'>min</th>
+    #    <th align='center'>max</th>
+    #</tr>
+    #<tr>
+    #    <td>ESP32S3</td>
+    #    <td align='center'>:green_heart:-15876</td>
+    #    <td align='right'>:small_red_triangle:+216</td>
+    #    <td align='center'>:green_heart:-1</td>
+    #    <td align='center'>0</td>
+    #    <td align='center'>:green_heart:-472</td>
+    #    <td align='center'>:small_red_triangle:+48</td>
+    #    <td align='center'>:green_heart:-1</td>
+    #    <td align='center'>0</td>
+    #</tr>
+
     html_table = "<table>\n"
     # Generate heading row
-    html_table = html_table + "<tr>" + "".join(["<th>" + str(cell) + "</th>" for cell in row_list[0]]) + "</tr>\n"
-    #html_table = html_table + "<tr>" + "".join(["<th colspan='2' align='center'>" + str(cell) + "</th>" if index != 0 else "<th>" + str(cell) + "</th>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
+    #html_table = html_table + "<tr>" + "".join(["<th>" + str(cell) + "</th>" for cell in row_list[0]]) + "</tr>\n"
+    html_table = html_table + "<tr>" + "".join(["<th colspan='2' align='center'>" + str(cell) + "</th>" if index != 0 else "<th>" + str(cell) + "</th>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
 
     # Add data rows
     for row in row_list[1:]:
-        html_table = html_table + "<tr>" + "".join(["<td align='right'>" + str(cell) + "</td>" if index != 0 else "<td>" + str(cell) + "</td>" for index, cell in enumerate(row)]) + "</tr>\n"
+        html_table = html_table + "<tr>" + "".join(["<td align='center'>" + str(cell) + "</td>" if index != 0 else "<td>" + str(cell) + "</td>" for index, cell in enumerate(row)]) + "</tr>\n"
 
     html_table = html_table + "</table>\n"
 
