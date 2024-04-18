@@ -592,7 +592,7 @@ class ReportSizeDeltas:
                 if str(summary_report_data[row][cell]) != "":
                     if cell == 1 or cell == 2 or cell == 5 or cell == 6:
                         if int(summary_report_data[row][cell]) > 0 and int(summary_report_data[row][cell]) < 2048:
-                            print_result = emoji_warning + "+" + str(summary_report_data[row][cell])
+                            print_result = emoji_warning + "+"
                         if int(summary_report_data[row][cell]) > 2047:
                             print_result = emoji_increased + "+"
                         if int(summary_report_data[row][cell]) < 0:
@@ -604,6 +604,8 @@ class ReportSizeDeltas:
                             print_result += str(detailed_report_data[row][cell])
                     else:
                         if float(summary_report_data[row][cell]) > 0:
+                            print_result = emoji_warning + "+"
+                        if float(summary_report_data[row][cell]) > 1:
                             print_result = emoji_increased + "+"
                         if float(summary_report_data[row][cell]) < 0:
                             print_result = emoji_decreased
