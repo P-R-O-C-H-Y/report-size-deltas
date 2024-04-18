@@ -509,11 +509,11 @@ class ReportSizeDeltas:
                     #ram_delta_percentage = sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_percentage] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_percentage]
 
                     #Calculate percentage change from flash_bytes and ram_bytes
-                    flash_delta_percentage = round(float(((sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes] / 
-                                              master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes]) * 100) - 100),2)
+                    flash_delta_percentage = float(((sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes] / 
+                                              master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes]) * 100) - 100)
                     
-                    ram_delta_percentage = round(float(((sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes] /
-                                                master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes]) * 100) - 100),2)
+                    ram_delta_percentage = float(((sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes] /
+                                                master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes]) * 100) - 100)
                     
                     if flash_delta_bytes > flash_b_max:
                         flash_b_max = flash_delta_bytes
@@ -585,17 +585,25 @@ class ReportSizeDeltas:
             for cell in range(1,len(summary_report_data[row])):
                 print_result = ""
 
+                #cells 1,2,5,6 are integers, 3,4,7,8 are floats take care of them
                 if str(summary_report_data[row][cell]) != "":
-                    if float(summary_report_data[row][cell]) > 0:
-                        print_result = emoji_increased + "+"
-                    if float(summary_report_data[row][cell]) < 0:
-                        print_result = emoji_decreased
-                    #if detailed_report_data[row][cell] is bigger than 2000 or less than -2000, do /1024 and add "KB"
-                    if float(summary_report_data[row][cell]) > 2048 or float(summary_report_data[row][cell]) < -2048:
-                        print_result += str(int(summary_report_data[row][cell])/1024) + " K"
+                    if cell == 1 or cell == 2 or cell == 5 or cell == 6:
+                        if int(summary_report_data[row][cell]) > 0:
+                            print_result = emoji_increased + "+"
+                        if int(summary_report_data[row][cell]) < 0:
+                            print_result = emoji_decreased
+                        #if summary_report_data[row][cell] is bigger than 2000 or less than -2000, do /1024 and add "KB"
+                        if int(summary_report_data[row][cell]) > 2048 or int(summary_report_data[row][cell]) < -2048:
+                            print_result += str(int(summary_report_data[row][cell])/1024) + " K"
+                        else:
+                            print_result += str(summary_report_data[row][cell])
                     else:
-                        print_result += str(summary_report_data[row][cell])
-                    
+                        if float(summary_report_data[row][cell]) > 0:
+                            print_result = emoji_increased + "+"
+                        if float(summary_report_data[row][cell]) < 0:
+                            print_result = emoji_decreased
+                        #add float value to the print result with 2 decimal points
+                        print_result += "{:.2f}".format(summary_report_data[row][cell])
                 else:
                     print_result = "-"
 
