@@ -878,11 +878,11 @@ def generate_detailed_html_table(row_list):
     html_table = "<table>\n"
     # Generate heading row
     #html_table = html_table + "<tr>" + "".join(["<th>" + str(cell) + "</th>" for cell in row_list[0]]) + "</tr>\n"
-    html_table = html_table + "<tr>" + "".join(["<th colspan='2' align='center'>" + str(cell) + "</th>" if index != 0 else "<th>" + str(cell) + "</th>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
+    html_table = html_table + "<tr>" + "".join(["<th colspan='2' align='center' nowrap>" + str(cell) + "</th>" if index != 0 else "<th nowrap>" + str(cell) + "</th>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
 
     # Add data rows
     for row in row_list[1:]:
-        html_table = html_table + "<tr>" + "".join(["<td>" + str(cell) + "</td>" for cell in row]) + "</tr>\n"
+        html_table = html_table + "<tr>" + "".join(["<td nowrap>" + str(cell) + "</td>" for cell in row]) + "</tr>\n"
 
     html_table = html_table + "</table>\n"
 
@@ -927,11 +927,11 @@ def generate_summary_html_table(row_list):
     html_table = "<table>\n"
     # Generate heading row
     #html_table = html_table + "<tr>" + "".join(["<th>" + str(cell) + "</th>" for cell in row_list[0]]) + "</tr>\n"
-    html_table = html_table + "<tr>" + "".join(["<th colspan='2' align='center'>" + str(cell) + "</th>" if index != 0 else "<th>" + str(cell) + "</th>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
+    html_table = html_table + "<tr>" + "".join(["<th colspan='2' align='center' nowrap>" + str(cell) + "</th>" if index != 0 else "<th nowrap>" + str(cell) + "</th>" for index, cell in enumerate(row_list[0])]) + "</tr>\n"
 
     # Add data rows
     for row in row_list[1:]:
-        html_table = html_table + "<tr>" + "".join(["<td align='center'>" + str(cell) + "</td>" if index != 0 else "<td>" + str(cell) + "</td>" for index, cell in enumerate(row)]) + "</tr>\n"
+        html_table = html_table + "<tr>" + "".join(["<td align='center' nowrap>" + str(cell) + "</td>" if index != 0 else "<td nowrap>" + str(cell) + "</td>" for index, cell in enumerate(row)]) + "</tr>\n"
 
     html_table = html_table + "</table>\n"
 
