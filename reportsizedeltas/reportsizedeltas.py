@@ -557,7 +557,7 @@ class ReportSizeDeltas:
         logger.debug("Summary report data:\n" + str(summary_report_data))
 
         emoji_decreased = ":green_heart:"
-        emoji_increased = ":small_red_triangle:"
+        emoji_increased = ":bangbang:"
         emoji_warning = ":warning:"
 
         # Process detailed report data with emojis
@@ -600,6 +600,8 @@ class ReportSizeDeltas:
                         #if summary_report_data[row][cell] is bigger than 2000 or less than -2000, do /1024 and add "KB"
                         if int(summary_report_data[row][cell]) > 2047 or int(summary_report_data[row][cell]) < -2048:
                             print_result += str(round(int(summary_report_data[row][cell])/1024)) + "K"
+                        else:
+                            print_result += str(detailed_report_data[row][cell])
                     else:
                         if float(summary_report_data[row][cell]) > 0:
                             print_result = emoji_increased + "+"
