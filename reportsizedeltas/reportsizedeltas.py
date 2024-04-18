@@ -504,10 +504,17 @@ class ReportSizeDeltas:
                 #each skech contains "sizes" key with valus "flash_bytes", "flash_percentage", "ram_bytes", "ram_percentage"
                 if master_sketch != None:
                     flash_delta_bytes = sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes]
-                    flash_delta_percentage = sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_percentage] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_percentage]
+                    #flash_delta_percentage = sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_percentage] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_percentage]
                     ram_delta_bytes = sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes]
-                    ram_delta_percentage = sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_percentage] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_percentage]
+                    #ram_delta_percentage = sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_percentage] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_percentage]
 
+                    #Calculate percentage change from flash_bytes and ram_bytes
+                    flash_delta_percentage = round(float(((sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes] / 
+                                              master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes]) * 100) - 100),2)
+                    
+                    ram_delta_percentage = round(float(((sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes] /
+                                                master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes]) * 100) - 100),2)
+                    
                     if flash_delta_bytes > flash_b_max:
                         flash_b_max = flash_delta_bytes
                     if flash_delta_bytes < flash_b_min:
@@ -559,11 +566,15 @@ class ReportSizeDeltas:
 
                 if str(detailed_report_data[row][cell]) != "":
                     if int(detailed_report_data[row][cell]) > 0:
-                        print_result = emoji_increased + "+" + str(detailed_report_data[row][cell])
+                        print_result = emoji_increased + "+"
                     if int(detailed_report_data[row][cell]) < 0:
-                        print_result = emoji_decreased + str(detailed_report_data[row][cell])
-                    if int(detailed_report_data[row][cell]) == 0:
-                        print_result = str(detailed_report_data[row][cell])
+                        print_result = emoji_decreased
+                    #if detailed_report_data[row][cell] is bigger than 2000 or less than -2000, do /1024 and add "KB"
+                    if int(detailed_report_data[row][cell]) > 2048 or int(detailed_report_data[row][cell]) < -2048:
+                        print_result += str(int(detailed_report_data[row][cell])/1024) + " K"
+                    else:
+                        print_result += str(detailed_report_data[row][cell])
+                    
                 else:
                     print_result = "-"
 
@@ -574,13 +585,17 @@ class ReportSizeDeltas:
             for cell in range(1,len(summary_report_data[row])):
                 print_result = ""
 
-                if str(summary_report_data[row][cell]) != "":
-                    if int(summary_report_data[row][cell]) > 0:
-                        print_result = emoji_increased + "+" + str(summary_report_data[row][cell])
-                    if int(summary_report_data[row][cell]) < 0:
-                        print_result = emoji_decreased + str(summary_report_data[row][cell])
-                    if int(summary_report_data[row][cell]) == 0:
-                        print_result = str(summary_report_data[row][cell])
+                if str(detailed_report_data[row][cell]) != "":
+                    if int(detailed_report_data[row][cell]) > 0:
+                        print_result = emoji_increased + "+"
+                    if int(detailed_report_data[row][cell]) < 0:
+                        print_result = emoji_decreased
+                    #if detailed_report_data[row][cell] is bigger than 2000 or less than -2000, do /1024 and add "KB"
+                    if int(detailed_report_data[row][cell]) > 2048 or int(detailed_report_data[row][cell]) < -2048:
+                        print_result += str(int(detailed_report_data[row][cell])/1024) + " K"
+                    else:
+                        print_result += str(detailed_report_data[row][cell])
+                    
                 else:
                     print_result = "-"
 
