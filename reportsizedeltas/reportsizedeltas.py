@@ -571,7 +571,7 @@ class ReportSizeDeltas:
                         print_result = emoji_decreased
                     #if detailed_report_data[row][cell] is bigger than 2000 or less than -2000, do /1024 and add "KB"
                     if int(detailed_report_data[row][cell]) > 2048 or int(detailed_report_data[row][cell]) < -2048:
-                        print_result += str(int(detailed_report_data[row][cell])/1024) + " K"
+                        print_result += str(round(int(summary_report_data[row][cell])/1024)) + " K"
                     else:
                         print_result += str(detailed_report_data[row][cell])
                     
