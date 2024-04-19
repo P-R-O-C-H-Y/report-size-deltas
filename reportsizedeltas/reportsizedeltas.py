@@ -769,6 +769,8 @@ class ReportSizeDeltas:
         else:
             request = urllib.request.Request(url=url, headers=headers, data=data, method=method)
 
+        print("::debug::Request: " + str(request))
+
         retry_count = 0
         while retry_count <= maximum_urlopen_retries:
             retry_count += 1
