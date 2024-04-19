@@ -67,7 +67,7 @@ class ReportSizeDeltas:
     token -- GitHub access token
     pr_number -- pull request number (optional, default: None)
     """
-    report_key_beginning = "Memory usage test (comparing PR agains master branch)"
+    report_key_beginning = "Memory usage test (comparing PR against master branch)"
     not_applicable_indicator = "N/A"
 
     class ReportKeys:
