@@ -161,16 +161,18 @@ class ReportSizeDeltas:
             print("::debug::PR number: " + str(pr_number))
 
             # Check if report exists in the PR, if yes then edit the previous comment report with the new data
-            comment_id = self.report_exists(pr_number=pr_number)
+            comment_id = self.report_exists(pr_number=pr_number, report_markdown=report)
             print("::debug::Comment id: " + str(comment_id))
-            if comment_id != 0 and self.update_comment:
+            if comment_id > 0 and self.update_comment:
                 print("::debug::Report already exists")
                 print("::debug::Updating the existing comment")
                 # Update the existing comment
                 self.update_report(pr_number=pr_number, report_markdown=report, comment_id=comment_id)                
-            else:
+            elif comment_id == 0:
                 print("::debug::Creating a new comment")
                 self.comment_report(pr_number=pr_number, report_markdown=report)
+            else:
+                print("Report with same data already exists, skipping")
             
 
 
@@ -251,7 +253,7 @@ class ReportSizeDeltas:
             page_number += 1
             page_count = api_data["page_count"]
 
-    def report_exists(self, pr_number, pr_head_sha = ""):
+    def report_exists(self, pr_number, pr_head_sha = "", report_markdown=""):
         """Return whether a report has already been commented to the pull request thread for the latest workflow run
 
         Keyword arguments:
@@ -270,7 +272,11 @@ class ReportSizeDeltas:
             for comment_data in comments_data:
                 # Check if the comment is a report for the PR's head SHA
                 if comment_data["body"].startswith(self.report_key_beginning + pr_head_sha):
-                    return comment_data["id"]
+                    # Check if the report is the same as the one that would be posted
+                        if comment_data["body"] == report_markdown:
+                            return -1
+                        else:
+                            return comment_data["id"]
 
             page_number += 1
             page_count = api_data["page_count"]
