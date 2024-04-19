@@ -163,12 +163,12 @@ class ReportSizeDeltas:
             # Check if report exists in the PR, if yes then edit the previous comment report with the new data
             comment_id = self.report_exists(pr_number=pr_number, report_markdown=report)
             print("::debug::Comment id: " + str(comment_id))
-            if comment_id > 0 and self.update_comment:
-                print("::debug::Report already exists")
-                print("::debug::Updating the existing comment")
-                # Update the existing comment
-                self.update_report(pr_number=pr_number, report_markdown=report, comment_id=comment_id)                
-            elif comment_id == 0:
+            #if comment_id > 0 and self.update_comment:
+            #    print("::debug::Report already exists")
+            #    print("::debug::Updating the existing comment")
+            #    # Update the existing comment
+            #    self.update_report(pr_number=pr_number, report_markdown=report, comment_id=comment_id)                
+            if comment_id == 0:
                 print("::debug::Creating a new comment")
                 self.comment_report(pr_number=pr_number, report_markdown=report)
             else:
