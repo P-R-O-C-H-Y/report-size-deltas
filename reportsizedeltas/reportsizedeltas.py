@@ -675,9 +675,7 @@ class ReportSizeDeltas:
         report_data = report_data.encode(encoding="utf-8")
         url = ("https://api.github.com/repos/"
                + self.repository_name
-               + "/issues/"
-               + str(pr_number)
-               + "/comments/"
+               + "/issues/comments/"
                + str(comment_id))
         method = "PATCH"
 
