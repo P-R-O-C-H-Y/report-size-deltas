@@ -13,6 +13,9 @@ inputs:
   pr-number:
     description: 'Number of PR where to comment the results'
     default: ''
+  update-comment:
+     description: "when posting a report, set this to true to only update the previous report (if one exists)"
+     default: true
 runs:
   using: 'docker'
   image: 'Dockerfile'

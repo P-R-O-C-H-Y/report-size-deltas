@@ -67,7 +67,7 @@ class ReportSizeDeltas:
     token -- GitHub access token
     pr_number -- pull request number (optional, default: None)
     """
-    report_key_beginning = "Memory usage test (comparing PR against master branch)"
+    report_key_beginning = "### Memory usage test (comparing PR against master branch)"
     not_applicable_indicator = "N/A"
 
     class ReportKeys:
@@ -102,11 +102,12 @@ class ReportSizeDeltas:
         error = "error"
 
 
-    def __init__(self, repository_name, sketches_reports_source, token, pr_number=None):
+    def __init__(self, repository_name, sketches_reports_source, token, pr_number=None, update_comment=True):
         self.repository_name = repository_name
         self.sketches_reports_source = sketches_reports_source
         self.token = token
         self.pr_number = pr_number
+        self.update_comment = update_comment
 
     def report_size_deltas(self):
         """Comment a report of memory usage change to pull request(s)."""
@@ -159,7 +160,18 @@ class ReportSizeDeltas:
             pr_number = re.sub("[^0-9]", "", pr_number)
             print("::debug::PR number: " + str(pr_number))
 
-            self.comment_report(pr_number=pr_number, report_markdown=report)
+            # Check if report exists in the PR, if yes then edit the previous comment report with the new data
+            comment_id = self.report_exists(pr_number=pr_number)
+            print("::debug::Comment id: " + str(comment_id))
+            if comment_id != 0 and self.update_comment:
+                print("::debug::Report already exists")
+                print("::debug::Updating the existing comment")
+                # Update the existing comment
+                self.update_report(pr_number=pr_number, report_markdown=report, comment_id=comment_id)                
+            else:
+                print("::debug::Creating a new comment")
+                self.comment_report(pr_number=pr_number, report_markdown=report)
+            
 
 
     def report_size_deltas_from_local_reports_on_schedule(self):
@@ -206,7 +218,7 @@ class ReportSizeDeltas:
                     continue
 
                 if self.report_exists(pr_number=pr_number,
-                                    pr_head_sha=pr_head_sha):
+                                    pr_head_sha=pr_head_sha) != 0:
                     # Go on to the next PR
                     print("::debug::Report already exists")
                     continue
@@ -258,13 +270,13 @@ class ReportSizeDeltas:
             for comment_data in comments_data:
                 # Check if the comment is a report for the PR's head SHA
                 if comment_data["body"].startswith(self.report_key_beginning + pr_head_sha):
-                    return True
+                    return comment_data["id"]
 
             page_number += 1
             page_count = api_data["page_count"]
 
         # No reports found for the PR's head SHA
-        return False
+        return 0
 
     def get_artifact_download_url_for_sha(self, pr_user_login, pr_head_ref, pr_head_sha):
         """Return the report artifact download URL associated with the given head commit hash
@@ -612,7 +624,7 @@ class ReportSizeDeltas:
                 summary_report_data[row][cell] = print_result
         
         # Add comment heading
-        report_markdown = "### " + self.report_key_beginning + "\n\n"
+        report_markdown = self.report_key_beginning + "\n\n"
 
         # Add info on what is in table 
         report_markdown = report_markdown + "The table below shows the summary of memory usage change (decrease - increase) in bytes and percentage for each target.\n\n"
@@ -649,6 +661,27 @@ class ReportSizeDeltas:
                + "/comments")
 
         self.http_request(url=url, data=report_data)
+
+    def update_report(self, pr_number, report_markdown, comment_id):
+        """Submit the report as a comment on the PR thread
+
+        Keyword arguments:
+        pr_number -- pull request number to submit the report to
+        report_markdown -- Markdown formatted report
+        """
+        print("::debug::Adding deltas report comment to pull request")
+        report_data = {"body": report_markdown, }
+        report_data = json.dumps(obj=report_data)
+        report_data = report_data.encode(encoding="utf-8")
+        url = ("https://api.github.com/repos/"
+               + self.repository_name
+               + "/issues/"
+               + str(pr_number)
+               + "/comments/"
+               + str(comment_id))
+        method = "PATCH"
+
+        self.http_request(url=url, data=report_data, method=method)
 
     def api_request(self, request, request_parameters="", page_number=1):
         """Do a GitHub API request. Return a dictionary containing:
@@ -701,7 +734,7 @@ class ReportSizeDeltas:
         except Exception as exception:
             raise exception
 
-    def http_request(self, url, data=None):
+    def http_request(self, url, data=None, method=None):
         """Make a request and return a dictionary:
         read -- the response
         info -- headers
@@ -712,12 +745,12 @@ class ReportSizeDeltas:
         data -- data to pass with the request
                 (default value: None)
         """
-        with self.raw_http_request(url=url, data=data) as response_object:
+        with self.raw_http_request(url=url, data=data, method=method) as response_object:
             return {"body": response_object.read().decode(encoding="utf-8", errors="ignore"),
                     "headers": response_object.info(),
                     "url": response_object.geturl()}
 
-    def raw_http_request(self, url, data=None):
+    def raw_http_request(self, url, data=None, method=None):
         """Make a request and return an object containing the response.
 
         Keyword arguments:
@@ -729,10 +762,12 @@ class ReportSizeDeltas:
         maximum_urlopen_retries = 3
 
         logger.info("Opening URL: " + url)
-
         # GitHub recommends using user name as User-Agent (https://developer.github.com/v3/#user-agent-required)
         headers = {"Authorization": "token " + self.token, "User-Agent": self.repository_name.split("/")[0]}
-        request = urllib.request.Request(url=url, headers=headers, data=data)
+        if method is None:
+            request = urllib.request.Request(url=url, headers=headers, data=data)
+        else:
+            request = urllib.request.Request(url=url, headers=headers, data=data, method=method)
 
         retry_count = 0
         while retry_count <= maximum_urlopen_retries:
