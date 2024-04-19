@@ -501,20 +501,23 @@ class ReportSizeDeltas:
 
                 print("::debug::Master sketch: " + str(master_sketch))
                 #Calculate the deltas, master sketch is the main sketch for comparison
-                #each skech contains "sizes" key with valus "flash_bytes", "flash_percentage", "ram_bytes", "ram_percentage"
                 if master_sketch != None:
                     flash_delta_bytes = sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes]
-                    #flash_delta_percentage = sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_percentage] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_percentage]
                     ram_delta_bytes = sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes]
-                    #ram_delta_percentage = sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_percentage] - master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_percentage]
 
                     #Calculate percentage change from flash_bytes and ram_bytes
-                    flash_delta_percentage = float(((sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes] / 
-                                              master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes]) * 100) - 100)
+                    flash_delta_percentage = round(float(((sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes] / 
+                                              master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.flash_bytes]) * 100) - 100),2)
                     
-                    ram_delta_percentage = float(((sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes] /
-                                                master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes]) * 100) - 100)
+                    ram_delta_percentage = round(float(((sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes] /
+                                                master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes]) * 100) - 100),2)
                     
+                    # Workaround for fake 8 bytes deltas
+                    if flash_delta_bytes == 8:
+                        flash_delta_bytes = 0
+                    if ram_delta_bytes == 8:
+                        ram_delta_bytes = 0
+
                     if flash_delta_bytes > flash_b_max:
                         flash_b_max = flash_delta_bytes
                     if flash_delta_bytes < flash_b_min:
@@ -538,20 +541,12 @@ class ReportSizeDeltas:
                     detailed_report_data[row_number][column_number] = ""
                     detailed_report_data[row_number][column_number+1] = ""
 
-                #detailed_report_data[row_number][column_number] = sketch[self.ReportKeys.sizes][0][self.ReportKeys.delta][self.ReportKeys.absolute]
-                #detailed_report_data[row_number][column_number+1] = sketch[self.ReportKeys.sizes][1][self.ReportKeys.delta][self.ReportKeys.absolute]
-
             # Add data to the summary report
             summary_report_data.append([board[self.ReportKeys.target].upper(),
                                         flash_b_min, flash_b_max,
                                         flash_p_min, flash_p_max,
                                         ram_b_min, ram_b_max,
                                         ram_p_min, ram_p_max])
-            
-                                        #get_summary_value(self, True, flash_b_min, flash_b_max),
-                                        #get_summary_value(self, True, flash_p_min, flash_p_max),
-                                        #get_summary_value(self, True, ram_b_min, ram_b_max),
-                                        #get_summary_value(self, True, ram_p_min, ram_p_max)])
             column_number += 2
 
         logger.debug("Summary report data:\n" + str(summary_report_data))
@@ -620,7 +615,7 @@ class ReportSizeDeltas:
         report_markdown = "### " + self.report_key_beginning + "\n\n"
 
         # Add info on what is in table 
-        report_markdown = report_markdown + "The table below shows the summary of memory usage change (min - max) in bytes and percentage for each target.\n\n"
+        report_markdown = report_markdown + "The table below shows the summary of memory usage change (decrease - increase) in bytes and percentage for each target.\n\n"
 
         # Add summary table
         report_markdown = report_markdown + generate_summary_html_table(row_list=summary_report_data) + "\n"
