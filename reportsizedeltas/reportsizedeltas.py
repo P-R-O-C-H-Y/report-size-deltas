@@ -251,7 +251,7 @@ class ReportSizeDeltas:
             page_number += 1
             page_count = api_data["page_count"]
 
-    def report_exists(self, pr_number, pr_head_sha):
+    def report_exists(self, pr_number, pr_head_sha = ""):
         """Return whether a report has already been commented to the pull request thread for the latest workflow run
 
         Keyword arguments:
