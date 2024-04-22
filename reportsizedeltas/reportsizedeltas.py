@@ -531,9 +531,9 @@ class ReportSizeDeltas:
                                                 master_sketch[self.ReportKeys.sizes][0][self.ReportKeys.ram_bytes]) * 100) - 100),2)
                     
                     # Workaround for fake 8 bytes deltas
-                    if flash_delta_bytes == 8:
+                    if flash_delta_bytes == 8 or flash_delta_bytes == -8:
                         flash_delta_bytes = 0
-                    if ram_delta_bytes == 8:
+                    if ram_delta_bytes == 8 or ram_delta_bytes == -8:
                         ram_delta_bytes = 0
 
                     if flash_delta_bytes > flash_b_max:
