@@ -125,6 +125,9 @@ class ReportSizeDeltas:
         elif os.environ["GITHUB_EVENT_NAME"] == "push":
             self.report_size_deltas_from_local_reports_on_schedule()
 
+        elif os.environ["GITHUB_EVENT_NAME"] == "workflow_dispatch":
+            self.report_size_deltas_from_local_reports_on_dispatch()
+
         else:
             # The script is being run from a workflow triggered by something other than a PR
             # Scan the repository's pull requests and comment memory usage change reports where appropriate.
@@ -184,6 +187,32 @@ class ReportSizeDeltas:
 
         if sketches_reports:
             report = self.generate_report(sketches_reports=sketches_reports)
+
+            # datetime object containing current date and time
+            now = datetime.now()
+            
+            # dd/mm/YY H:M:S
+            dt_string = now.strftime("%b-%d-%Y %H:%M:%S")
+            print("date and time =", dt_string)
+
+            with open(report_destination, "w+") as file:
+                file.write(report)
+                file.write("\nGenerated on: " + dt_string + "\n")
+
+
+    def report_size_deltas_from_local_reports_on_dispatch(self):
+        """Comment a report of memory usage change to the file ."""
+        report_destination = os.environ["INPUT_DESTINATION-FILE"]
+        sketches_reports_folder = pathlib.Path(os.environ["GITHUB_WORKSPACE"], self.sketches_reports_source+"/pr")
+        sketches_reports = self.get_sketches_reports(artifact_folder_object=sketches_reports_folder)
+
+        # Read master branch sketches reports
+        master_sketches_reports_folder = pathlib.Path(os.environ["GITHUB_WORKSPACE"], self.sketches_reports_source+"/master")
+        master_sketches_reports = self.get_sketches_reports(artifact_folder_object=master_sketches_reports_folder)
+
+        self.report_key_beginning = "### Memory usage test"
+        if sketches_reports:
+            report = self.generate_report(sketches_reports=sketches_reports, master_sketches_reports=master_sketches_reports)
 
             # datetime object containing current date and time
             now = datetime.now()
