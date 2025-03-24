@@ -492,8 +492,37 @@ class ReportSizeDeltas:
         # Debug print detailed report data
         logger.debug("Detailed report data:\n" + str(detailed_report_data))
 
+        # Apply renaming logic to both current and master sketches if they exist
+        def apply_renaming_logic(sketches):
+            library_counts = {}
+            for sketch in sketches:
+                sketch_name = sketch[self.ReportKeys.name]
+                # Remove the "libraries/" prefix from the sketch name
+                sketch_name = sketch_name.replace("libraries/", "")
+                if sketch_name in library_counts:
+                    library_counts[sketch_name] += 1
+                    # Add suffix to the sketch name
+                    sketch[self.ReportKeys.name] = f"{sketch_name} ({library_counts[sketch_name]})"
+                    # If this is the second occurrence, go back and add (1) to the first occurrence
+                    if library_counts[sketch_name] == 2:
+                        # Find the first occurrence and add (1) to it
+                        for first_sketch in sketches:
+                            if first_sketch[self.ReportKeys.name] == sketch_name:
+                                first_sketch[self.ReportKeys.name] = f"{sketch_name} (1)"
+                                break
+                else:
+                    library_counts[sketch_name] = 1
+
+        # Apply renaming to current sketches
         for board in sketches_reports:
-            #for boards in fqbns_data[self.ReportKeys.boards]:
+            apply_renaming_logic(board[self.ReportKeys.sketches])
+
+        # Apply renaming to master sketches if they exist
+        if master_sketches_reports:
+            for master_board in master_sketches_reports:
+                apply_renaming_logic(master_board[self.ReportKeys.sketches])
+
+        for board in sketches_reports:
             detailed_report_data[0].append(board[self.ReportKeys.target].upper())
 
             flash_b_max = 0
@@ -509,8 +538,6 @@ class ReportSizeDeltas:
             for sketch in board[self.ReportKeys.sketches]:
                 cell_value = {}
                 sketch_name = sketch[self.ReportKeys.name]
-                # Remove the "libraries/" prefix from the sketch name
-                sketch_name = sketch_name.replace("libraries/", "")
                 
                 # Determine row number for sketch
                 position = get_report_row_number(
@@ -519,19 +546,13 @@ class ReportSizeDeltas:
                 )
                 if position == 0:
                     # Add a row to the report
-                    #row = [ "N/A" for i in boards]
                     row = [sketch_name]
                     for i in range(board_count):
                         row.extend(["",""])
-                    #row.extend(dict(zip(cell_key_list, [0]*len(cell_key_list))) for x in range(board_count))
-                    #row.append("N/A")
-                    #row[0] = library_name
                     detailed_report_data.append(row)
                     row_number = len(detailed_report_data) - 1
-                    #cell_value = dict(zip(cell_key_list, [0]*len(cell_key_list)))
                 else:
                     row_number = position
-                    #cell_value = summary_report_data[row_number][column_number]
 
                 # Add data to the report for FLASH and RAM, can be changed to absolute or relative
                 print("::debug::Sketch: " + str(sketch))
@@ -546,10 +567,6 @@ class ReportSizeDeltas:
                                 if loop_master_sketch[self.ReportKeys.name].split("/")[-1] == sketch[self.ReportKeys.name].split("/")[-1]:
                                     master_sketch = loop_master_sketch
                                     break
-
-                                #if loop_master_sketch[self.ReportKeys.name] == sketch[self.ReportKeys.name]:
-                                #    master_sketch = loop_master_sketch
-                                #    break
 
                 print("::debug::Master sketch: " + str(master_sketch))
                 #Calculate the deltas, master sketch is the main sketch for comparison
