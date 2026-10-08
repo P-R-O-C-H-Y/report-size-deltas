@@ -131,7 +131,10 @@ def test_main(monkeypatch, mocker, setup_environment_variables):
     reportsizedeltas.ReportSizeDeltas.assert_called_once_with(
         repository_name=setup_environment_variables.repository_name,
         sketches_reports_source=setup_environment_variables.sketches_reports_source,
-        token=setup_environment_variables.token
+        token=setup_environment_variables.token,
+        pr_number=None,
+        update_comment=True,
+        baseline_branch="master",
     )
     ReportSizeDeltas.report_size_deltas.assert_called_once()
 

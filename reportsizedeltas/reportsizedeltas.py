@@ -27,10 +27,12 @@ def main():
         os.environ["INPUT_SKETCHES-REPORTS-SOURCE"] = os.environ["INPUT_SIZE-DELTAS-REPORTS-ARTIFACT-NAME"]
 
     baseline_branch = os.environ.get("INPUT_BASELINE-BRANCH", "").strip() or "master"
+    update_comment = os.environ.get("INPUT_UPDATE-COMMENT", "true").lower() == "true"
     report_size_deltas = ReportSizeDeltas(repository_name=os.environ["GITHUB_REPOSITORY"],
                                           sketches_reports_source=os.environ["INPUT_SKETCHES-REPORTS-SOURCE"],
                                           token=os.environ["INPUT_GITHUB-TOKEN"],
                                           pr_number=os.environ["INPUT_PR-NUMBER"] if os.environ.get("INPUT_PR-NUMBER") else None,
+                                          update_comment=update_comment,
                                           baseline_branch=baseline_branch)
 
     report_size_deltas.report_size_deltas()
