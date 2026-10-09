@@ -13,6 +13,9 @@ inputs:
   pr-number:
     description: 'Number of PR where to comment the results'
     default: ''
+  baseline-branch:
+    description: 'Name of the branch the PR is compared against. Used in the report heading. Default: master'
+    default: 'master'
   update-comment:
      description: "when posting a report, set this to true to only update the previous report (if one exists)"
      default: false

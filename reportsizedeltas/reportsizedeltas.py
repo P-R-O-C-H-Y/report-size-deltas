@@ -26,10 +26,14 @@ def main():
               "sketches-reports-source instead.")
         os.environ["INPUT_SKETCHES-REPORTS-SOURCE"] = os.environ["INPUT_SIZE-DELTAS-REPORTS-ARTIFACT-NAME"]
 
+    baseline_branch = os.environ.get("INPUT_BASELINE-BRANCH", "").strip() or "master"
+    update_comment = os.environ.get("INPUT_UPDATE-COMMENT", "true").lower() == "true"
     report_size_deltas = ReportSizeDeltas(repository_name=os.environ["GITHUB_REPOSITORY"],
                                           sketches_reports_source=os.environ["INPUT_SKETCHES-REPORTS-SOURCE"],
                                           token=os.environ["INPUT_GITHUB-TOKEN"],
-                                          pr_number=os.environ["INPUT_PR-NUMBER"] if "INPUT_PR-NUMBER" in os.environ else None)
+                                          pr_number=os.environ["INPUT_PR-NUMBER"] if os.environ.get("INPUT_PR-NUMBER") else None,
+                                          update_comment=update_comment,
+                                          baseline_branch=baseline_branch)
 
     report_size_deltas.report_size_deltas()
 
@@ -66,8 +70,8 @@ class ReportSizeDeltas:
     artifact_name -- name of the workflow artifact that contains the memory usage data
     token -- GitHub access token
     pr_number -- pull request number (optional, default: None)
+    baseline_branch -- branch the sizes are compared against (default: master)
     """
-    report_key_beginning = "### Memory usage test (comparing PR against master branch)"
     not_applicable_indicator = "N/A"
 
     class ReportKeys:
@@ -102,12 +106,15 @@ class ReportSizeDeltas:
         error = "error"
 
 
-    def __init__(self, repository_name, sketches_reports_source, token, pr_number=None, update_comment=True):
+    def __init__(self, repository_name, sketches_reports_source, token, pr_number=None, update_comment=True,
+                 baseline_branch="master"):
         self.repository_name = repository_name
         self.sketches_reports_source = sketches_reports_source
         self.token = token
         self.pr_number = pr_number
         self.update_comment = update_comment
+        self.baseline_branch = baseline_branch
+        self.report_key_beginning = "### Memory usage test (comparing PR against " + baseline_branch + " branch)"
 
     def report_size_deltas(self):
         """Comment a report of memory usage change to pull request(s)."""
@@ -126,7 +133,12 @@ class ReportSizeDeltas:
             self.report_size_deltas_from_local_reports_on_schedule()
 
         elif os.environ["GITHUB_EVENT_NAME"] == "workflow_dispatch":
-            self.report_size_deltas_from_local_reports_on_dispatch()
+            # Manual runs with a PR number comment on that PR (same as workflow_run).
+            # Without a PR number, write destination-file (used by scheduled/manual file reports).
+            if self.pr_number:
+                self.report_size_deltas_from_local_reports_on_workflow_run()
+            else:
+                self.report_size_deltas_from_local_reports_on_dispatch()
 
         else:
             # The script is being run from a workflow triggered by something other than a PR

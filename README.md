@@ -18,6 +18,7 @@ This action comments on the pull request with a report on the resulting change i
     - [Run from a scheduled workflow](#run-from-a-scheduled-workflow)
     - [Run from the same workflow as the `arduino/compile-sketches` action](#run-from-the-same-workflow-as-the-arduinocompile-sketches-action)
   - [`github-token`](#github-token)
+  - [`baseline-branch`](#baseline-branch)
 - [Example usage](#example-usage)
   - [Scheduled workflow](#scheduled-workflow)
   - [Workflow triggered by `pull_request` event](#workflow-triggered-by-pull_request-event)
@@ -57,6 +58,14 @@ In this usage, the `sketches-reports-source` defines the path to the folder cont
 [GitHub access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) used to comment the memory usage comparison results to the PR thread.
 
 **Default**: [`GITHUB_TOKEN`](https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)
+
+### `baseline-branch`
+
+Name of the branch the pull request is compared against. Used in the report heading (`comparing PR against <branch> branch`).
+
+**Default**: `master`
+
+When this action is triggered by `workflow_dispatch` and `pr-number` is set, the report is commented on that pull request (same as `workflow_run`). Without `pr-number`, the report is written to `destination-file`.
 
 ## Example usage
 

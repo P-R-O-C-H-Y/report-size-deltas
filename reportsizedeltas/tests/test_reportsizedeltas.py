@@ -20,16 +20,21 @@ report_keys = reportsizedeltas.ReportSizeDeltas.ReportKeys()
 
 def get_reportsizedeltas_object(repository_name="FooOwner/BarRepository",
                                 sketches_reports_source="foo-artifact-name",
-                                token="foo token"):
+                                token="foo token",
+                                pr_number=None,
+                                baseline_branch="master"):
     """Return a reportsizedeltas.ReportSizeDeltas object to use in tests.
 
     Keyword arguments:
     repository_name -- repository owner and name e.g., octocat/Hello-World
     sketches_reports_source -- name of the workflow artifact that contains the memory usage data
     token -- GitHub access token
+    pr_number -- pull request number
+    baseline_branch -- branch the sizes are compared against
     """
     return reportsizedeltas.ReportSizeDeltas(repository_name=repository_name,
-                                             sketches_reports_source=sketches_reports_source, token=token)
+                                             sketches_reports_source=sketches_reports_source, token=token,
+                                             pr_number=pr_number, baseline_branch=baseline_branch)
 
 
 def directories_are_same(left_directory, right_directory):
@@ -126,7 +131,10 @@ def test_main(monkeypatch, mocker, setup_environment_variables):
     reportsizedeltas.ReportSizeDeltas.assert_called_once_with(
         repository_name=setup_environment_variables.repository_name,
         sketches_reports_source=setup_environment_variables.sketches_reports_source,
-        token=setup_environment_variables.token
+        token=setup_environment_variables.token,
+        pr_number=None,
+        update_comment=True,
+        baseline_branch="master",
     )
     ReportSizeDeltas.report_size_deltas.assert_called_once()
 
@@ -177,10 +185,21 @@ def test_set_verbosity():
     reportsizedeltas.set_verbosity(enable_verbosity=False)
 
 
+def test_report_key_beginning_uses_baseline_branch():
+    default_object = get_reportsizedeltas_object()
+    assert default_object.report_key_beginning == "### Memory usage test (comparing PR against master branch)"
+
+    release_object = get_reportsizedeltas_object(baseline_branch="release/v4.0.x")
+    assert release_object.report_key_beginning == "### Memory usage test (comparing PR against release/v4.0.x branch)"
+
+
 # noinspection PyUnresolvedReferences
 def test_report_size_deltas(mocker, monkeypatch):
     mocker.patch("reportsizedeltas.ReportSizeDeltas.report_size_deltas_from_local_reports", autospec=True)
     mocker.patch("reportsizedeltas.ReportSizeDeltas.report_size_deltas_from_workflow_artifacts", autospec=True)
+    mocker.patch("reportsizedeltas.ReportSizeDeltas.report_size_deltas_from_local_reports_on_workflow_run", autospec=True)
+    mocker.patch("reportsizedeltas.ReportSizeDeltas.report_size_deltas_from_local_reports_on_dispatch", autospec=True)
+    mocker.patch("reportsizedeltas.ReportSizeDeltas.report_size_deltas_from_local_reports_on_schedule", autospec=True)
 
     report_size_deltas = get_reportsizedeltas_object()
 
@@ -196,7 +215,22 @@ def test_report_size_deltas(mocker, monkeypatch):
     monkeypatch.setenv("GITHUB_EVENT_NAME", "schedule")
     report_size_deltas.report_size_deltas()
     report_size_deltas.report_size_deltas_from_local_reports.assert_not_called()
-    report_size_deltas.report_size_deltas_from_workflow_artifacts.assert_called_once()
+    report_size_deltas.report_size_deltas_from_local_reports_on_schedule.assert_called_once()
+
+    # Manual run with a PR number comments on that PR
+    mocker.resetall()
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "workflow_dispatch")
+    report_size_deltas.pr_number = "42"
+    report_size_deltas.report_size_deltas()
+    report_size_deltas.report_size_deltas_from_local_reports_on_workflow_run.assert_called_once()
+    report_size_deltas.report_size_deltas_from_local_reports_on_dispatch.assert_not_called()
+
+    # Manual run without a PR number writes destination-file
+    mocker.resetall()
+    report_size_deltas.pr_number = None
+    report_size_deltas.report_size_deltas()
+    report_size_deltas.report_size_deltas_from_local_reports_on_dispatch.assert_called_once()
+    report_size_deltas.report_size_deltas_from_local_reports_on_workflow_run.assert_not_called()
 
 
 def test_report_size_deltas_from_local_reports(mocker, monkeypatch):
