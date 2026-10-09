@@ -19,6 +19,7 @@ This action comments on the pull request with a report on the resulting change i
     - [Run from the same workflow as the `arduino/compile-sketches` action](#run-from-the-same-workflow-as-the-arduinocompile-sketches-action)
   - [`github-token`](#github-token)
   - [`baseline-branch`](#baseline-branch)
+  - [`update-comment`](#update-comment)
 - [Example usage](#example-usage)
   - [Scheduled workflow](#scheduled-workflow)
   - [Workflow triggered by `pull_request` event](#workflow-triggered-by-pull_request-event)
@@ -66,6 +67,13 @@ Name of the branch the pull request is compared against. Used in the report head
 **Default**: `master`
 
 When this action is triggered by `workflow_dispatch` and `pr-number` is set, the report is commented on that pull request (same as `workflow_run`). Without `pr-number`, the report is written to `destination-file`.
+
+### `update-comment`
+
+**Default**: `false`
+
+- `true`: update the existing report with the same heading, or create one if none exists.
+- `false`: always post a new comment, even if a report with that heading is already on the pull request.
 
 ## Example usage
 
