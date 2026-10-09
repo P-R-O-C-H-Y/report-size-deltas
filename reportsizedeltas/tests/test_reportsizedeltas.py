@@ -22,7 +22,8 @@ def get_reportsizedeltas_object(repository_name="FooOwner/BarRepository",
                                 sketches_reports_source="foo-artifact-name",
                                 token="foo token",
                                 pr_number=None,
-                                baseline_branch="master"):
+                                baseline_branch="master",
+                                update_comment=True):
     """Return a reportsizedeltas.ReportSizeDeltas object to use in tests.
 
     Keyword arguments:
@@ -31,10 +32,12 @@ def get_reportsizedeltas_object(repository_name="FooOwner/BarRepository",
     token -- GitHub access token
     pr_number -- pull request number
     baseline_branch -- branch the sizes are compared against
+    update_comment -- whether to update an existing report instead of posting a new one
     """
     return reportsizedeltas.ReportSizeDeltas(repository_name=repository_name,
                                              sketches_reports_source=sketches_reports_source, token=token,
-                                             pr_number=pr_number, baseline_branch=baseline_branch)
+                                             pr_number=pr_number, baseline_branch=baseline_branch,
+                                             update_comment=update_comment)
 
 
 def directories_are_same(left_directory, right_directory):
@@ -191,6 +194,39 @@ def test_report_key_beginning_uses_baseline_branch():
 
     release_object = get_reportsizedeltas_object(baseline_branch="release/v4.0.x")
     assert release_object.report_key_beginning == "### Memory usage test (comparing PR against release/v4.0.x branch)"
+
+
+def test_workflow_run_update_comment(mocker, monkeypatch):
+    monkeypatch.setenv("GITHUB_WORKSPACE", "/tmp")
+    report = "foo report"
+    mocker.patch("reportsizedeltas.ReportSizeDeltas.get_sketches_reports", autospec=True, return_value=[{}])
+    mocker.patch("reportsizedeltas.ReportSizeDeltas.generate_report", autospec=True, return_value=report)
+    mocker.patch("reportsizedeltas.ReportSizeDeltas.report_exists", autospec=True, return_value=123)
+    mocker.patch("reportsizedeltas.ReportSizeDeltas.comment_report", autospec=True)
+    mocker.patch("reportsizedeltas.ReportSizeDeltas.update_report", autospec=True)
+
+    # update-comment=false: always post a new comment, even if a matching heading exists.
+    report_size_deltas = get_reportsizedeltas_object(pr_number="42", update_comment=False)
+    report_size_deltas.report_size_deltas_from_local_reports_on_workflow_run()
+    report_size_deltas.comment_report.assert_called_once_with(report_size_deltas, pr_number="42", report_markdown=report)
+    report_size_deltas.update_report.assert_not_called()
+    report_size_deltas.report_exists.assert_not_called()
+
+    # update-comment=true: update the existing comment when the body changed.
+    mocker.resetall()
+    reportsizedeltas.ReportSizeDeltas.report_exists.return_value = 123
+    report_size_deltas = get_reportsizedeltas_object(pr_number="42", update_comment=True)
+    report_size_deltas.report_size_deltas_from_local_reports_on_workflow_run()
+    report_size_deltas.update_report.assert_called_once_with(
+        report_size_deltas, pr_number="42", report_markdown=report, comment_id=123)
+    report_size_deltas.comment_report.assert_not_called()
+
+    # update-comment=true: skip when the existing comment already has this report.
+    mocker.resetall()
+    reportsizedeltas.ReportSizeDeltas.report_exists.return_value = -1
+    report_size_deltas.report_size_deltas_from_local_reports_on_workflow_run()
+    report_size_deltas.update_report.assert_not_called()
+    report_size_deltas.comment_report.assert_not_called()
 
 
 # noinspection PyUnresolvedReferences
