@@ -17,7 +17,7 @@ inputs:
     description: 'Name of the branch the PR is compared against. Used in the report heading. Default: master'
     default: 'master'
   update-comment:
-     description: "when posting a report, set this to true to only update the previous report (if one exists)"
+     description: "true: update the previous report with the same heading (create if none). false: always post a new comment."
      default: false
 runs:
   using: 'docker'
